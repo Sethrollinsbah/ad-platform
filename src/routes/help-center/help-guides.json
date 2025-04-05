@@ -1,0 +1,622 @@
+{
+  "guides": [
+    {
+      "id": "getting-started",
+      "title": "Getting Started with ResAds",
+      "description": "Learn the basics of creating and managing restaurant ad campaigns",
+      "icon": "Book",
+      "category": "Beginner",
+      "lastUpdated": "March 15, 2025",
+      "readTime": "5 min read",
+      "author": "ResAds Team",
+      "slug": "getting-started-with-resads",
+      "sections": [
+        {
+          "heading": "Welcome to ResAds!",
+          "content": "This guide will walk you through the basics of setting up and managing your restaurant's advertising campaigns with our platform."
+        },
+        {
+          "heading": "What is ResAds?",
+          "content": "ResAds is a specialized advertising platform designed specifically for restaurants. Our platform helps you create targeted ad campaigns to attract more diners to your establishment."
+        },
+        {
+          "heading": "Creating Your Account",
+          "content": "To get started with ResAds, you'll need to create an account. Here's how:\n\n- Visit the ResAds signup page\n- Enter your restaurant's details\n- Verify your email address\n- Complete your restaurant profile"
+        },
+        {
+          "heading": "Setting Up Your First Campaign",
+          "content": "Once your account is set up, you can create your first campaign by following these steps:\n\n1. Click on \"New Campaign\" in your dashboard\n2. Select a campaign type (e.g., Weekend Special, Happy Hour, etc.)\n3. Define your target audience\n4. Set your budget and campaign duration\n5. Upload creative assets or use our templates\n6. Review and launch your campaign"
+        },
+        {
+          "heading": "Navigating the Dashboard",
+          "content": "Your ResAds dashboard provides an overview of all your campaigns and their performance. Key elements include:\n\n- **Campaign Overview:** View all active and past campaigns\n- **Analytics:** Monitor campaign performance metrics\n- **Budget Management:** Track spending and allocate budgets\n- **Creative Assets:** Manage your ad designs and templates"
+        },
+        {
+          "heading": "Next Steps",
+          "content": "Now that you're familiar with the basics, check out our other guides for more detailed information:\n\n- Creating Your First Campaign\n- Audience Targeting Strategies\n- Understanding Campaign Analytics\n- Best Practices for Food Ad Design"
+        }
+      ],
+      "relatedGuides": ["campaign-creation", "campaign-analytics", "targeting-options"]
+    },
+    {
+      "id": "campaign-creation",
+      "title": "Creating Your First Campaign",
+      "description": "A step-by-step guide to launching effective restaurant advertising",
+      "icon": "FileText",
+      "category": "Beginner",
+      "lastUpdated": "March 18, 2025",
+      "readTime": "8 min read",
+      "author": "Marketing Team",
+      "slug": "creating-your-first-campaign",
+      "sections": [
+        {
+          "heading": "Creating Your First ResAds Campaign",
+          "content": "This guide provides a detailed walkthrough of creating and launching your first restaurant ad campaign with ResAds."
+        },
+        {
+          "heading": "Choosing the Right Campaign Type",
+          "content": "ResAds offers several campaign types to suit different promotional needs:\n\n- **Weekend Special:** Promote weekend-only deals to drive traffic during peak days\n- **Happy Hour:** Advertise drink specials and appetizer deals during off-peak hours\n- **Dinner Deal:** Showcase dinner specials or prix fixe menus\n- **Lunch Promotion:** Target the workday lunch crowd with quick-service offers\n- **Seasonal Menu:** Highlight limited-time seasonal dishes"
+        },
+        {
+          "heading": "Defining Your Campaign Objective",
+          "content": "Clear objectives help you measure success. Common restaurant campaign objectives include:\n\n- Increasing foot traffic\n- Boosting online orders\n- Promoting a new menu item\n- Building brand awareness\n- Driving reservations"
+        },
+        {
+          "heading": "Setting Up Your Campaign",
+          "content": "1. From your dashboard, click the \"New Campaign\" button\n2. Select your campaign type\n3. Name your campaign (e.g., \"Summer Weekend Special\")\n4. Set your campaign dates (start and end dates)\n5. Define your target audience (location, demographics, interests)\n6. Set your budget and bidding strategy"
+        },
+        {
+          "heading": "Creating Compelling Ad Content",
+          "content": "Effective restaurant ads typically include:\n\n- High-quality food photography\n- Clear value proposition (what's the special offer?)\n- Brief, appetizing descriptions\n- Call-to-action (Order Now, Reserve, etc.)\n- Your restaurant's branding"
+        },
+        {
+          "heading": "Reviewing and Launching",
+          "content": "Before launching your campaign:\n\n1. Preview all ad variations\n2. Confirm your audience targeting\n3. Verify budget allocations\n4. Check campaign scheduling\n5. Submit for approval (typically completed within 24 hours)"
+        },
+        {
+          "heading": "Post-Launch Monitoring",
+          "content": "After your campaign goes live:\n\n- Monitor performance metrics daily\n- Look for early trends in customer engagement\n- Make adjustments to targeting or budget as needed\n- Test different ad variations to optimize performance"
+        }
+      ],
+      "relatedGuides": ["targeting-options", "campaign-analytics", "ad-design"]
+    },
+    {
+      "id": "targeting-options",
+      "title": "Audience Targeting Strategies",
+      "description": "How to reach the right customers for your restaurant",
+      "icon": "FileText",
+      "category": "Intermediate",
+      "lastUpdated": "March 20, 2025",
+      "readTime": "10 min read",
+      "author": "Analytics Team",
+      "slug": "audience-targeting-strategies",
+      "sections": [
+        {
+          "heading": "Audience Targeting Strategies for Restaurants",
+          "content": "This guide explores effective targeting options to help your restaurant reach the most relevant potential customers."
+        },
+        {
+          "heading": "Location-Based Targeting",
+          "content": "For restaurants, location is critical. Our platform offers several geo-targeting options:\n\n- **Radius Targeting:** Target users within a specific distance from your restaurant (1-10 miles typically works best)\n- **Neighborhood Targeting:** Select specific neighborhoods that match your customer profile\n- **Custom Zones:** Create custom polygons to target specific areas like business districts or entertainment zones\n- **Competitor Targeting:** Reach people who have visited competing restaurants"
+        },
+        {
+          "heading": "Demographic Targeting",
+          "content": "Refine your audience based on key demographics:\n\n- **Age Groups:** Target specific age ranges that match your typical customer\n- **Income Levels:** Adjust targeting based on your price point\n- **Household Composition:** Target families, couples, or singles depending on your offering\n- **Education & Occupation:** Useful for business lunch promotions or upscale dining"
+        },
+        {
+          "heading": "Behavioral Targeting",
+          "content": "Reach people based on their dining and lifestyle behaviors:\n\n- **Dining Frequency:** Target frequent restaurant-goers\n- **Cuisine Preferences:** Reach people who enjoy your type of cuisine\n- **Dining Time Patterns:** Target lunch crowds, dinner patrons, or weekend diners\n- **Reservation Behaviors:** Target people who make restaurant reservations\n- **Delivery Users:** Reach people who frequently order takeout or delivery"
+        },
+        {
+          "heading": "Interest-Based Targeting",
+          "content": "Connect with people based on related interests:\n\n- **Food Enthusiasts:** Target self-identified foodies and cuisine hobbyists\n- **Health & Diet:** Target based on dietary preferences (vegan, gluten-free, etc.)\n- **Entertainment:** Reach people interested in dining as entertainment\n- **Local Events:** Target people interested in local happenings"
+        },
+        {
+          "heading": "Custom Audience Strategies",
+          "content": "Advanced targeting approaches for restaurants:\n\n- **Customer List Targeting:** Upload your customer email list to reach existing customers\n- **Lookalike Audiences:** Find new customers who share similarities with your best patrons\n- **Website Visitors:** Retarget people who have visited your restaurant website\n- **Cart Abandoners:** Target users who began but didn't complete an online order"
+        },
+        {
+          "heading": "Optimizing Your Targeting Strategy",
+          "content": "Best practices for refining your approach:\n\n- Start broader and narrow based on performance data\n- Create segment-specific ad creative\n- Test different audience combinations\n- Analyze conversion data to identify your best-performing audience segments\n- Adjust targeting based on time of day and day of week patterns"
+        }
+      ],
+      "relatedGuides": ["campaign-creation", "campaign-analytics", "local-marketing"]
+    },
+    {
+      "id": "campaign-analytics",
+      "title": "Understanding Campaign Analytics",
+      "description": "Make sense of your campaign performance data",
+      "icon": "FileText",
+      "category": "Intermediate",
+      "lastUpdated": "March 22, 2025",
+      "readTime": "12 min read",
+      "author": "Data Science Team",
+      "slug": "understanding-campaign-analytics",
+      "sections": [
+        {
+          "heading": "Making Sense of Your Campaign Data",
+          "content": "This guide will help you understand and interpret the analytics data available for your restaurant advertising campaigns."
+        },
+        {
+          "heading": "Key Performance Metrics",
+          "content": "These are the essential metrics to track for your restaurant campaigns:\n\n- **Impressions:** The number of times your ad was displayed\n- **Clicks:** The number of people who clicked on your ad\n- **CTR (Click-Through Rate):** The percentage of impressions that resulted in clicks\n- **Conversions:** Actions taken after clicking your ad (reservations, calls, directions, etc.)\n- **Conversion Rate:** The percentage of clicks that resulted in conversions\n- **CPC (Cost Per Click):** The average cost you pay for each click\n- **CPA (Cost Per Acquisition):** The average cost to acquire one customer\n- **ROAS (Return On Ad Spend):** Revenue generated per dollar spent on advertising"
+        },
+        {
+          "heading": "Dashboard Navigation",
+          "content": "The analytics dashboard is organized into sections:\n\n- **Overview:** Snapshot of all campaign performance\n- **Campaign Details:** Metrics for individual campaigns\n- **Platform Breakdown:** Performance across different advertising platforms\n- **Audience Insights:** Data about who engaged with your ads\n- **Conversion Tracking:** Details on specific conversion actions\n- **Cost Analysis:** Budget utilization and ROI metrics"
+        },
+        {
+          "heading": "Understanding Performance Graphs",
+          "content": "The dashboard contains several visualization types:\n\n- **Line Charts:** Show trends over time for metrics like impressions and clicks\n- **Bar Charts:** Compare performance across campaigns or platforms\n- **Pie Charts:** Show distribution of traffic sources or conversion types\n- **Heat Maps:** Display performance by time of day and day of week\n- **Funnel Visualizations:** Illustrate customer journey and conversion paths"
+        },
+        {
+          "heading": "Setting Up Custom Reports",
+          "content": "Create tailored reports for your specific needs:\n\n1. Navigate to the 'Reports' section of your dashboard\n2. Click 'Create New Report'\n3. Select the metrics you want to include\n4. Choose your preferred visualization types\n5. Set the reporting timeframe (daily, weekly, monthly)\n6. Save and schedule automatic delivery if desired"
+        },
+        {
+          "heading": "Interpreting Results",
+          "content": "When analyzing your campaign data, consider these factors:\n\n- **Benchmark Comparisons:** How your metrics compare to industry averages\n- **Historical Trends:** How current performance compares to past campaigns\n- **Contextual Factors:** External events that might impact performance\n- **Conversion Attribution:** Which touchpoints led to customer actions\n- **ROI Calculations:** The actual return on your advertising investment"
+        },
+        {
+          "heading": "Taking Action Based on Data",
+          "content": "Use your analytics to improve campaign performance:\n\n- **Budget Adjustments:** Reallocate spending to better-performing platforms or campaigns\n- **Creative Optimization:** Update ads based on engagement metrics\n- **Audience Refinement:** Narrow or expand targeting based on conversion data\n- **Timing Modifications:** Adjust schedules based on performance by time/day\n- **Offer Tuning:** Modify promotions based on conversion rates"
+        },
+        {
+          "heading": "Setting Up Alerts",
+          "content": "Create automated alerts for:\n\n- Budget thresholds (e.g., 75% of budget spent)\n- Performance anomalies (sudden drops or spikes)\n- Conversion milestones (reaching target numbers)\n- Cost metric warnings (CPA exceeding targets)\n- Campaign end date reminders"
+        }
+      ],
+      "relatedGuides": ["campaign-creation", "targeting-options", "conversion-tracking"]
+    },
+    {
+      "id": "ad-design",
+      "title": "Best Practices for Food Ad Design",
+      "description": "Create mouth-watering ads that drive conversions",
+      "icon": "FileText",
+      "category": "Advanced",
+      "lastUpdated": "March 25, 2025",
+      "readTime": "9 min read",
+      "author": "Creative Team",
+      "slug": "food-ad-design-best-practices",
+      "sections": [
+        {
+          "heading": "Creating Effective Restaurant Ad Creatives",
+          "content": "This guide covers design principles and best practices for creating compelling restaurant advertisements."
+        },
+        {
+          "heading": "Food Photography Essentials",
+          "content": "High-quality food imagery is critical for restaurant ads:\n\n- **Lighting:** Use natural light or professional lighting to highlight texture and color\n- **Styling:** Arrange food to showcase key ingredients and presentation\n- **Freshness:** Ensure food looks appetizing and recently prepared\n- **Angle:** Choose angles that highlight the most appealing aspects of each dish\n- **Focus:** Use selective focus to draw attention to key elements\n- **Color:** Enhance natural food colors without making them look artificial"
+        },
+        {
+          "heading": "Design Elements for Restaurant Ads",
+          "content": "Key components of effective restaurant ad design:\n\n- **Brand Identity:** Consistent logo, colors, and fonts across all ads\n- **Clear Offer:** Prominently display the special or promotion\n- **Minimal Text:** Keep copy brief and focused on the key message\n- **Strong CTA:** Clear call-to-action (Reserve, Order Now, etc.)\n- **White Space:** Avoid cluttered designs that distract from the food\n- **Mobile Optimization:** Ensure designs work well on small screens"
+        },
+        {
+          "heading": "Platform-Specific Design Requirements",
+          "content": "Adjust your designs based on the advertising platform:\n\n- **Instagram:** Square or vertical formats with minimal text\n- **Facebook:** Multiple format options with text limitations\n- **Google Ads:** Various sizes with specific text-to-image ratios\n- **Email:** Responsive designs that work across devices\n- **Display Ads:** Standard banner sizes with clear branding"
+        },
+        {
+          "heading": "Creating Effective Ad Copy",
+          "content": "Writing compelling text for restaurant ads:\n\n- **Highlight Uniqueness:** Focus on what makes your restaurant special\n- **Use Sensory Language:** Describe flavors, aromas, and textures\n- **Create Urgency:** Include limited-time offers and deadlines\n- **Be Specific:** Mention exact dishes, prices, or promotions\n- **Focus on Benefits:** Explain what the customer gains\n- **Include Key Info:** Address, hours, and reservation methods"
+        },
+        {
+          "heading": "Ad Design by Campaign Type",
+          "content": "Tailor your approach based on campaign objectives:\n\n- **Menu Launch:** Showcase new dishes with close-up photography\n- **Happy Hour:** Emphasize value and atmosphere with lifestyle imagery\n- **Weekend Special:** Create a sense of occasion and exclusivity\n- **Delivery Promotion:** Focus on convenience and at-home experience\n- **Holiday Campaign:** Incorporate seasonal elements and special menus"
+        },
+        {
+          "heading": "Using the ResAds Creative Suite",
+          "content": "Our platform offers tools to create professional ad designs:\n\n1. Access the Creative Suite from your campaign dashboard\n2. Choose from restaurant-specific templates\n3. Upload your food photography\n4. Customize text, colors, and branding elements\n5. Preview how ads will appear on different platforms\n6. Save designs for future campaigns"
+        },
+        {
+          "heading": "A/B Testing Your Designs",
+          "content": "Improve performance through testing:\n\n- **Image Variations:** Test different food photos or angles\n- **Copy Alternatives:** Try different headlines or calls-to-action\n- **Color Schemes:** Test different background or accent colors\n- **Layout Options:** Vary the arrangement of elements\n- **Offer Presentation:** Test different ways of presenting the same offer\n- **Ad Formats:** Compare performance across different sizes and formats"
+        }
+      ],
+      "relatedGuides": ["campaign-creation", "ab-testing", "creative-assets"]
+    },
+    {
+      "id": "local-marketing",
+      "title": "Local Marketing Strategies",
+      "description": "Hyperlocal tactics to attract nearby diners",
+      "icon": "MapPin",
+      "category": "Intermediate",
+      "lastUpdated": "March 27, 2025",
+      "readTime": "8 min read",
+      "author": "Local Marketing Team",
+      "slug": "local-marketing-strategies",
+      "sections": [
+        {
+          "heading": "Hyperlocal Marketing for Restaurants",
+          "content": "This guide focuses on strategies to attract customers from your immediate surrounding area."
+        },
+        {
+          "heading": "Understanding Your Local Market",
+          "content": "Before implementing hyperlocal tactics, analyze your local area:\n\n- **Neighborhood Demographics:** Age, income, family status of nearby residents\n- **Local Businesses:** Identify potential partners and complementary businesses\n- **Community Calendars:** Align campaigns with local events and activities\n- **Competitor Analysis:** Understand other dining options in your vicinity\n- **Traffic Patterns:** Identify peak times for foot and vehicle traffic"
+        },
+        {
+          "heading": "Geofencing Campaigns",
+          "content": "Target customers within specific geographic boundaries:\n\n- **Restaurant Radius:** Create campaigns targeting people within 1-3 miles\n- **Business District Targeting:** Reach office workers during lunch hours\n- **Event Targeting:** Create temporary geofences around local events\n- **Competitive Conquesting:** Target people who visit competing restaurants\n- **Neighborhood Targeting:** Focus on specific residential areas"
+        },
+        {
+          "heading": "Local Search Optimization",
+          "content": "Improve visibility for nearby searches:\n\n- **Google Business Profile:** Maintain an updated and complete listing\n- **Local Keywords:** Incorporate neighborhood names in your campaign\n- **'Near Me' Campaigns:** Optimize for proximity-based searches\n- **Local Directory Listings:** Ensure consistent information across platforms\n- **Location Extensions:** Add your address to all applicable ads"
+        },
+        {
+          "heading": "Community Engagement Strategies",
+          "content": "Build local relationships to drive business:\n\n- **Local Event Sponsorships:** Support neighborhood activities and sports\n- **Business Partnerships:** Create co-promotions with nearby businesses\n- **Neighborhood Discounts:** Offer special pricing for local residents\n- **Community Fundraisers:** Host events that support local causes\n- **Local Influencer Partnerships:** Collaborate with neighborhood personalities"
+        },
+        {
+          "heading": "Local Ad Personalization",
+          "content": "Customize your messaging for hyperlocal relevance:\n\n- **Neighborhood Mentions:** Reference local landmarks or street names\n- **Weather-Triggered Ads:** Adjust messaging based on local conditions\n- **Local Event Tie-Ins:** Connect promotions to nearby happenings\n- **Commute-Based Timing:** Schedule ads during typical commute times\n- **Locally-Sourced Highlights:** Emphasize ingredients from area producers"
+        },
+        {
+          "heading": "Measuring Local Campaign Performance",
+          "content": "Track the effectiveness of your hyperlocal efforts:\n\n- **Foot Traffic Attribution:** Connect ad exposure to store visits\n- **Zip Code Analysis:** Track customer acquisition by neighborhood\n- **Local Conversion Rates:** Compare performance across different areas\n- **Distance Metrics:** Analyze how far customers travel to your restaurant\n- **Local Frequency:** Measure repeat visits from neighborhood customers"
+        }
+      ],
+      "relatedGuides": ["targeting-options", "geofencing-tactics", "community-marketing"]
+    },
+    {
+      "id": "conversion-tracking",
+      "title": "Setting Up Conversion Tracking",
+      "description": "Measure real-world actions from your restaurant campaigns",
+      "icon": "Activity",
+      "category": "Advanced",
+      "lastUpdated": "March 23, 2025",
+      "readTime": "11 min read",
+      "author": "Technical Team",
+      "slug": "setting-up-conversion-tracking",
+      "sections": [
+        {
+          "heading": "The Importance of Conversion Tracking",
+          "content": "This guide explains how to set up and use conversion tracking to measure the actual business impact of your advertising."
+        },
+        {
+          "heading": "Types of Restaurant Conversions",
+          "content": "Common conversion actions to track for restaurants:\n\n- **Phone Calls:** Customers calling your restaurant directly\n- **Direction Requests:** Users getting directions to your location\n- **Online Orders:** Food orders placed through your website or app\n- **Reservations:** Table bookings made online or through apps\n- **Menu Views:** Users viewing your menu online\n- **Special Offer Claims:** Customers redeeming advertised promotions\n- **Website Form Submissions:** Catering inquiries, event bookings, etc."
+        },
+        {
+          "heading": "Setting Up Basic Conversion Tracking",
+          "content": "To implement basic conversion tracking:\n\n1. Navigate to the 'Conversions' section in your dashboard\n2. Click 'Create New Conversion'\n3. Select the conversion type (call, website, app, etc.)\n4. Define the conversion event and value\n5. Get the tracking code or tag\n6. Implement the code on your website or app\n7. Test the conversion action to verify tracking"
+        },
+        {
+          "heading": "Advanced Conversion Setup",
+          "content": "For more detailed tracking capabilities:\n\n- **Multi-Touch Attribution:** Track customer interactions across multiple touchpoints\n- **Value-Based Tracking:** Assign different values to different conversion types\n- **Offline Conversion Imports:** Upload in-restaurant purchase data\n- **Cross-Device Tracking:** Follow customer journey across devices\n- **CRM Integration:** Connect advertising data with customer records"
+        },
+        {
+          "heading": "Call Tracking Implementation",
+          "content": "Set up tracking for phone call conversions:\n\n1. Enable the call tracking feature in your ResAds dashboard\n2. Select your tracking number options (local, toll-free, etc.)\n3. Define call duration threshold for conversion counting\n4. Set up call recording options (if desired)\n5. Implement the dynamic number insertion code on your website\n6. Configure call forwarding to your restaurant's actual number"
+        },
+        {
+          "heading": "Website Conversion Setup",
+          "content": "Implement tracking for website actions:\n\n1. Install the ResAds tracking pixel on all pages of your website\n2. Define conversion events in your dashboard (form submissions, button clicks, etc.)\n3. Set up thank-you page tracking for completed actions\n4. Configure conversion values based on estimated worth\n5. Test the tracking by completing the conversion actions yourself\n6. Verify data is appearing in your dashboard"
+        },
+        {
+          "heading": "Mobile App Tracking",
+          "content": "If you have a restaurant mobile app:\n\n1. Implement the ResAds SDK in your iOS or Android application\n2. Define in-app conversion events (ordering, reservations, etc.)\n3. Configure deep linking for campaign attribution\n4. Set up push notification tracking\n5. Connect app installs to campaign performance\n6. Measure order value and frequency from app users"
+        },
+        {
+          "heading": "Analyzing Conversion Data",
+          "content": "Making use of your conversion tracking data:\n\n- **Conversion Path Analysis:** Understand the customer journey to conversion\n- **Campaign Comparison:** Identify which campaigns drive the most valuable actions\n- **ROI Calculation:** Determine actual return based on conversion values\n- **Audience Insights:** See which customer segments convert best\n- **Dayparting Analysis:** Find the best times for driving conversions\n- **Budget Optimization:** Allocate spending based on conversion performance"
+        }
+      ],
+      "relatedGuides": ["campaign-analytics", "roi-measurement", "phone-call-tracking"]
+    },
+    {
+      "id": "budget-optimization",
+      "title": "Campaign Budget Optimization",
+      "description": "Maximize ROI with strategic budget allocation",
+      "icon": "DollarSign",
+      "category": "Advanced",
+      "lastUpdated": "March 28, 2025",
+      "readTime": "10 min read",
+      "author": "Finance Team",
+      "slug": "campaign-budget-optimization",
+      "sections": [
+        {
+          "heading": "Strategic Budget Management",
+          "content": "This guide covers techniques for optimizing your advertising budget to maximize returns for your restaurant."
+        },
+        {
+          "heading": "Understanding Restaurant Ad Costs",
+          "content": "Key cost concepts for restaurant marketing:\n\n- **CPM (Cost Per Mille):** Cost per thousand impressions\n- **CPC (Cost Per Click):** Cost for each user who clicks your ad\n- **CPA (Cost Per Acquisition):** Cost for each conversion action\n- **ROAS (Return On Ad Spend):** Revenue generated per dollar spent\n- **Customer Lifetime Value (CLV):** Total worth of a customer over time\n- **Average Order Value (AOV):** Typical spending per customer visit"
+        },
+        {
+          "heading": "Setting the Right Budget",
+          "content": "Factors to consider when determining your advertising budget:\n\n- **Business Goals:** Growth targets, new location launches, etc.\n- **Competitive Landscape:** Advertising intensity in your market\n- **Seasonality:** Busy and slow periods for your restaurant\n- **Special Events:** Holiday promotions, anniversaries, etc.\n- **Average Ticket Size:** Typical customer spending per visit\n- **Customer Acquisition Targets:** Number of new customers needed"
+        },
+        {
+          "heading": "Budget Allocation Strategies",
+          "content": "Methods for distributing your advertising budget:\n\n- **Platform Split:** Dividing budget across different advertising channels\n- **Campaign Tiering:** Allocating based on campaign priority\n- **Performance-Based:** Distributing based on historical results\n- **Dayparting:** Varying budget by time of day and day of week\n- **Geographic Weighting:** Allocating more to key neighborhoods\n- **Seasonal Adjustment:** Increasing spend during peak periods"
+        },
+        {
+          "heading": "Optimization Techniques",
+          "content": "Tactics to improve budget efficiency:\n\n- **Bid Optimization:** Adjusting bid amounts based on performance\n- **Audience Refinement:** Narrowing targeting to more convertible segments\n- **Creative Testing:** Identifying and scaling the best-performing ads\n- **Frequency Capping:** Limiting the number of times ads show to the same person\n- **Placement Optimization:** Focusing on the best-performing ad locations\n- **Dayparting Adjustments:** Scheduling ads during peak performance times"
+        },
+        {
+          "heading": "Restaurant-Specific Budget Tips",
+          "content": "Budget strategies specific to the restaurant industry:\n\n- **Mealtime Focus:** Concentrate budget around breakfast, lunch, or dinner\n- **Weekend Weighting:** Allocate more budget to Thursday-Sunday\n- **Weather Triggers:** Increase budget during optimal dining weather\n- **Event Targeting:** Boost spending around local events and holidays\n- **Slow Day Strategy:** Use promotions to drive traffic on typically slow days\n- **Competitive Conquesting:** Target competitors' customers during key times"
+        },
+        {
+          "heading": "Budget Tracking and Adjustment",
+          "content": "Ongoing monitoring and optimization processes:\n\n1. Set up daily budget alerts and notifications\n2. Create weekly performance review procedures\n3. Establish KPI thresholds for budget adjustments\n4. Implement mid-campaign optimization protocols\n5. Develop seasonal budget planning frameworks\n6. Create contingency plans for unexpected performance changes"
+        },
+        {
+          "heading": "ROI Measurement",
+          "content": "Evaluating the effectiveness of your spending:\n\n- **Revenue Attribution:** Connecting ad spend to actual sales\n- **New vs. Returning Customers:** Value of customer acquisition vs. retention\n- **Campaign Comparison:** Evaluating ROI across different campaigns\n- **Platform ROI Analysis:** Comparing returns across advertising channels\n- **Long-Term Impact:** Measuring extended effects beyond immediate conversions\n- **Brand Value Assessment:** Evaluating awareness and perception benefits"
+        }
+      ],
+      "relatedGuides": ["campaign-analytics", "conversion-tracking", "roi-measurement"]
+    },
+    {
+      "id": "seasonal-campaigns",
+      "title": "Seasonal Restaurant Campaigns",
+      "description": "Leverage seasonal events to drive restaurant traffic",
+      "icon": "Calendar",
+      "category": "Intermediate",
+      "lastUpdated": "March 26, 2025",
+      "readTime": "9 min read",
+      "author": "Strategy Team",
+      "slug": "seasonal-restaurant-campaigns",
+      "sections": [
+        {
+          "heading": "Planning Seasonal Promotions",
+          "content": "This guide covers how to create effective seasonal campaigns for your restaurant throughout the year."
+        },
+        {
+          "heading": "Annual Campaign Calendar",
+          "content": "Key seasonal opportunities for restaurant promotions:\n\n- **Winter:** Holiday dining, New Year's Eve, Valentine's Day\n- **Spring:** Easter brunch, Mother's Day, graduation celebrations\n- **Summer:** Patio season, summer cocktails, vacation specials\n- **Fall:** Back to school, Halloween, sports seasons\n- **Year-Round:** Local events, food holidays, restaurant anniversaries"
+        },
+        {
+          "heading": "Holiday Campaign Planning",
+          "content": "Creating effective holiday promotions:\n\n1. Start planning 6-8 weeks before major holidays\n2. Create special menus or limited-time offerings\n3. Design holiday-themed creative assets\n4. Implement reservation or pre-order systems\n5. Develop gift card promotions\n6. Create multi-channel marketing campaigns"
+        },
+        {
+          "heading": "Seasonal Menu Promotion",
+          "content": "Showcasing seasonal ingredients and dishes:\n\n- **Highlight Seasonal Ingredients:** Feature local, in-season produce\n- **Create Limited-Time Offers:** Develop special seasonal menus\n- **Use Seasonal Photography:** Update imagery to reflect current offerings\n- **Emphasize Seasonality:** Use season-specific language and themes\n- **Offer Cooking Classes:** Host seasonal cooking demonstrations\n- **Partner with Producers:** Collaborate with local farms or suppliers"
+        },
+        {
+          "heading": "Weather-Based Campaigns",
+          "content": "Adjusting promotions based on weather conditions:\n\n- **Hot Weather:** Promote refreshing drinks and light dishes\n- **Cold Weather:** Highlight comfort food and warm beverages\n- **Rainy Days:** Develop delivery promotions or rainy day specials\n- **Perfect Patio Weather:** Promote outdoor dining spaces\n- **Weather Triggers:** Set up automated campaigns based on forecasts\n- **Unexpected Weather:** Create contingency promotions for weather changes"
+        },
+        {
+          "heading": "Local Event Alignment",
+          "content": "Connecting your campaigns to community happenings:\n\n- **Sports Events:** Create specials tied to local teams\n- **Festivals:** Develop promotions aligned with local festivals\n- **Conferences:** Target business travelers during major conferences\n- **Concerts:** Create pre-show or after-party specials\n- **Marathons/Races:** Offer carb-loading or recovery menus\n- **Farmers Markets:** Align promotions with market days"
+        },
+        {
+          "heading": "Campaign Timing and Sequencing",
+          "content": "Strategic scheduling of seasonal campaigns:\n\n- **Advanced Promotion:** Begin awareness 3-4 weeks prior\n- **Peak Promotion:** Intensify 7-10 days before the event\n- **Last-Minute Push:** Create urgency 1-3 days before\n- **Day-Of Messaging:** Send reminders on the actual day\n- **Follow-Up:** Send thank you messages after the event\n- **Transition Plan:** Seamlessly move to the next seasonal campaign"
+        }
+      ],
+      "relatedGuides": ["campaign-creation", "local-marketing", "budget-optimization"]
+    },
+    {
+      "id": "social-media-strategy",
+      "title": "Restaurant Social Media Strategy",
+      "description": "Build an effective social media presence for your restaurant",
+      "icon": "Share2",
+      "category": "Intermediate",
+      "lastUpdated": "March 24, 2025",
+      "readTime": "12 min read",
+      "author": "Social Media Team",
+      "slug": "restaurant-social-media-strategy",
+      "sections": [
+        {
+          "heading": "Social Media for Restaurants",
+          "content": "This guide covers how to effectively use social media platforms to promote your restaurant and engage with customers."
+        },
+        {
+          "heading": "Platform Selection",
+          "content": "Choosing the right social platforms for your restaurant:\n\n- **Instagram:** Essential for food photography and visual storytelling\n- **Facebook:** Great for community building and local events\n- **TikTok:** Perfect for behind-the-scenes content and food trends\n- **Twitter:** Useful for quick updates and customer service\n- **Pinterest:** Ideal for recipe sharing and inspiration boards\n- **LinkedIn:** Valuable for B2B connections and catering opportunities"
+        },
+        {
+          "heading": "Content Strategy by Platform",
+          "content": "Tailoring your content to each platform:\n\n- **Instagram:** High-quality food photos, Stories of daily specials, Reels of dish preparation\n- **Facebook:** Event announcements, customer reviews, community engagement\n- **TikTok:** Chef tips, recipe reveals, kitchen behind-the-scenes\n- **Twitter:** Quick promotions, local news engagement, customer service\n- **Pinterest:** Recipe collections, interior design inspiration, catering ideas\n- **LinkedIn:** Business catering services, industry news, team recognition"
+        },
+        {
+          "heading": "Content Calendar Planning",
+          "content": "Organizing your social media content:\n\n1. Create a monthly content calendar\n2. Plan for regular content types (e.g., Menu Monday, Foodie Friday)\n3. Include seasonal promotions and holidays\n4. Schedule posts for optimal engagement times\n5. Allow flexibility for real-time content\n6. Balance promotional and engaging content"
+        },
+        {
+          "heading": "Food Photography Tips",
+          "content": "Creating appealing food content for social media:\n\n- **Natural Lighting:** Shoot near windows during daylight hours\n- **Composition:** Use the rule of thirds and interesting angles\n- **Props:** Incorporate appropriate tableware and ingredients\n- **Freshness:** Capture food immediately after preparation\n- **Editing:** Use light editing to enhance colors without looking artificial\n- **Consistency:** Develop a recognizable visual style for your brand"
+        },
+        {
+          "heading": "Engagement Strategies",
+          "content": "Building an active social media community:\n\n- **Respond Promptly:** Answer comments and messages within hours\n- **User-Generated Content:** Encourage and share customer photos\n- **Polls and Questions:** Use interactive features to boost engagement\n- **Contests:** Run photo contests or giveaways for followers\n- **Behind-the-Scenes:** Share staff stories and kitchen moments\n- **Chef Spotlights:** Feature your culinary team and their expertise"
+        },
+        {
+          "heading": "Paid Social Campaigns",
+          "content": "Leveraging paid advertising on social platforms:\n\n- **Boosted Posts:** Amplify your best-performing organic content\n- **Targeted Ads:** Create ads for specific local demographics\n- **Carousel Ads:** Showcase multiple menu items in a single ad\n- **Story Ads:** Create immersive, full-screen experiences\n- **Conversion Campaigns:** Drive specific actions like reservations\n- **Retargeting:** Reach people who've visited your website or engaged with your content"
+        },
+        {
+          "heading": "Measuring Social Media Success",
+          "content": "Tracking and analyzing your social performance:\n\n- **Engagement Metrics:** Likes, comments, shares, and saves\n- **Reach and Impressions:** How many people see your content\n- **Click-Through Rates:** Traffic driven to your website\n- **Conversion Actions:** Reservations, orders, or sign-ups from social\n- **Audience Growth:** Follower increases and demographic insights\n- **Sentiment Analysis:** The tone of comments and mentions"
+        }
+      ],
+      "relatedGuides": ["ad-design", "content-marketing", "instagram-advertising"]
+    },
+    {
+      "id": "mobile-advertising",
+      "title": "Mobile Advertising for Restaurants",
+      "description": "Reach diners on their mobile devices",
+      "icon": "Smartphone",
+      "category": "Intermediate",
+      "lastUpdated": "March 21, 2025",
+      "readTime": "9 min read",
+      "author": "Mobile Strategy Team",
+      "slug": "mobile-advertising-restaurants",
+      "sections": [
+        {
+          "heading": "Mobile-First Restaurant Marketing",
+          "content": "This guide covers how to effectively advertise your restaurant to customers on mobile devices."
+        },
+        {
+          "heading": "Understanding Mobile Dining Behavior",
+          "content": "How customers use mobile devices in the dining journey:\n\n- **Discovery:** Finding new restaurants through maps and apps\n- **Research:** Reading menus and reviews before visiting\n- **Decision-Making:** Comparing options while on the go\n- **Navigation:** Getting directions to your location\n- **Ordering:** Placing delivery or pickup orders\n- **Payment:** Using mobile payment methods in-restaurant\n- **Sharing:** Posting photos and reviews of their experience"
+        },
+        {
+          "heading": "Mobile Ad Formats",
+          "content": "Effective ad types for restaurant mobile marketing:\n\n- **Location-Based Ads:** Targeting users near your restaurant\n- **App Ads:** Placements in food, maps, and review apps\n- **Social Media Stories:** Vertical, full-screen mobile content\n- **Click-to-Call Ads:** One-tap calling for reservations\n- **Mobile Search Ads:** Appearing in mobile search results\n- **Mobile Banner Ads:** Display ads on mobile websites\n- **Video Ads:** Short-form videos optimized for mobile viewing"
+        },
+        {
+          "heading": "Mobile-Optimized Landing Pages",
+          "content": "Creating effective mobile destinations for your ads:\n\n1. Ensure fast loading times (under 3 seconds)\n2. Use mobile-friendly navigation and buttons\n3. Display your menu in an easy-to-read format\n4. Include prominent call and direction buttons\n5. Implement one-click reservation functionality\n6. Optimize forms for mobile input\n7. Test across different device types and sizes"
+        },
+        {
+          "heading": "Location-Based Mobile Tactics",
+          "content": "Leveraging location for mobile marketing:\n\n- **Geofencing:** Create virtual boundaries around specific areas\n- **Proximity Marketing:** Target users within short distances\n- **Check-In Promotions:** Offer incentives for location check-ins\n- **Beacon Technology:** Use in-restaurant beacons for personalized messaging\n- **Maps Integration:** Ensure visibility in map application searches\n- **Location Extensions:** Add your location to mobile ads"
+        },
+        {
+          "heading": "Mobile App Advertising",
+          "content": "Promoting your restaurant in relevant mobile applications:\n\n- **Food Delivery Apps:** Sponsored placements on platforms like Uber Eats or DoorDash\n- **Review Apps:** Enhanced listings on Yelp, TripAdvisor, etc.\n- **Map Applications:** Promoted pins on Google Maps and Apple Maps\n- **Entertainment Apps:** Ads in lifestyle and entertainment applications\n- **Weather Apps:** Weather-triggered promotions\n- **Local News Apps:** Community-focused advertising"
+        },
+        {
+          "heading": "Mobile Order & Pay Integration",
+          "content": "Connecting advertising to mobile ordering:\n\n- **One-Click Ordering:** Direct links from ads to ordering systems\n- **Mobile Menu Specials:** Exclusive items for mobile orders\n- **Order Ahead Promotions:** Campaigns focused on convenience\n- **Loyalty Integration:** Connect mobile ads to loyalty programs\n- **Mobile Payment Options:** Highlight contactless payment availability\n- **Reordering Campaigns:** Target previous mobile order customers"
+        },
+        {
+          "heading": "Measuring Mobile Campaign Success",
+          "content": "Tracking and optimizing mobile advertisement performance:\n\n- **Store Visits:** Track ad-influenced restaurant visits\n- **Click-to-Call Metrics:** Measure calls generated from mobile ads\n- **App Engagement:** Monitor interactions with your restaurant app\n- **Mobile Order Volume:** Track orders attributed to campaigns\n- **Cross-Device Attribution:** Connect mobile views to desktop conversions\n- **Mobile-Specific ROI:** Calculate return on mobile-specific investments"
+        }
+      ],
+      "relatedGuides": ["local-marketing", "targeting-options", "campaign-analytics"]
+    }
+  ],
+  "categories": [
+    {
+      "id": "beginner",
+      "name": "Beginner",
+      "description": "Essential information for those new to restaurant advertising"
+    },
+    {
+      "id": "intermediate",
+      "name": "Intermediate",
+      "description": "More advanced tactics for those familiar with the basics"
+    },
+    {
+      "id": "advanced",
+      "name": "Advanced",
+      "description": "Sophisticated strategies for experienced marketers"
+    }
+  ],
+  "faqCategories": [
+    {
+      "id": "pricing",
+      "name": "Pricing & Billing",
+      "icon": "DollarSign"
+    },
+    {
+      "id": "campaigns",
+      "name": "Campaign Management",
+      "icon": "BarChart"
+    },
+    {
+      "id": "technical",
+      "name": "Technical Support",
+      "icon": "Settings"
+    },
+    {
+      "id": "creative",
+      "name": "Creative & Design",
+      "icon": "Image"
+    },
+    {
+      "id": "account",
+      "name": "Account Management",
+      "icon": "User"
+    }
+  ],
+  "faqs": [
+    {
+      "id": "pricing-models",
+      "question": "How much does ResAds cost?",
+      "answer": "ResAds offers transparent CPM pricing, with rates starting at $12.50 per thousand impressions. We have three main packages: Local Reach ($499/mo), Regional Impact ($899/mo), and Maximum Exposure ($1,499/mo). Custom pricing is also available for multi-location restaurants.",
+      "category": "pricing"
+    },
+    {
+      "id": "geotargeting",
+      "question": "Can I target specific neighborhoods around my restaurant?",
+      "answer": "Yes! Our geofencing options allow you to target customers within specific distances from your restaurant location. You can create custom targeting zones as small as a quarter-mile radius or target specific neighborhoods, business districts, or events.",
+      "category": "campaigns"
+    },
+    {
+      "id": "campaign-timing",
+      "question": "How long does it take to create and launch a campaign?",
+      "answer": "Most campaigns can be created and launched within 48-72 hours. We'll work with you to develop creative assets, targeting strategy, and campaign goals. For restaurants with existing assets, we can often launch even faster.",
+      "category": "campaigns"
+    },
+    {
+      "id": "metrics-tracking",
+      "question": "What metrics will I be able to track?",
+      "answer": "Our dashboard provides comprehensive metrics including impressions, clicks, click-through rate (CTR), conversions, cost per click (CPC), cost per acquisition (CPA), and ROI. You can also track phone calls, direction requests, website visits, and online orders.",
+      "category": "technical"
+    },
+    {
+      "id": "creative-services",
+      "question": "Do you offer creative services for designing ads?",
+      "answer": "Yes, we provide professional creative services including food photography, ad design, and copywriting. These services can be added to any campaign package. We also work with your existing assets if you prefer.",
+      "category": "creative"
+    },
+    {
+      "id": "minimum-budget",
+      "question": "Is there a minimum budget requirement?",
+      "answer": "Our starter package begins at $499/month, which is our minimum commitment for managed campaigns. However, we do offer self-service options for smaller budgets starting at $250/month with a simplified feature set.",
+      "category": "pricing"
+    },
+    {
+      "id": "contract-length",
+      "question": "Do I need to sign a long-term contract?",
+      "answer": "No, ResAds offers flexible month-to-month options with no long-term commitment required. We also offer discounted rates for 3-month, 6-month, and annual commitments if you prefer locked-in pricing.",
+      "category": "pricing"
+    },
+    {
+      "id": "platform-mix",
+      "question": "Which advertising platforms do you use for restaurant campaigns?",
+      "answer": "We create customized platform mixes based on your specific goals. This typically includes a combination of Google Ads, Meta platforms (Facebook/Instagram), geotargeting networks, mobile advertising, and restaurant-specific platforms like Yelp and TripAdvisor.",
+      "category": "campaigns"
+    },
+    {
+      "id": "results-timeline",
+      "question": "How quickly will I see results from my campaigns?",
+      "answer": "Most restaurants begin seeing measurable results within the first 7-14 days of campaign launch. Impression and click metrics are available immediately, while conversion actions like reservations or in-store visits typically take 1-2 weeks to show clear patterns.",
+      "category": "campaigns"
+    },
+    {
+      "id": "campaign-changes",
+      "question": "Can I make changes to my campaign after it launches?",
+      "answer": "Yes, you have full flexibility to modify campaigns at any time. This includes adjusting targeting, creative assets, budget allocation, and scheduling. Changes typically take effect within 24 hours, and our team is available to assist with any modifications.",
+      "category": "campaigns"
+    },
+    {
+      "id": "campaign-pausing",
+      "question": "Can I pause my campaigns temporarily?",
+      "answer": "Yes, you can pause and resume campaigns at any time through your dashboard or by contacting your account manager. This is especially useful for managing seasonal fluctuations or temporary closures. There are no penalties for pausing campaigns.",
+      "category": "campaigns"
+    },
+    {
+      "id": "reporting",
+      "question": "How often will I receive campaign reports?",
+      "answer": "You'll have 24/7 access to real-time reporting through your dashboard. Additionally, we provide weekly performance summaries via email and comprehensive monthly reports with analysis and recommendations. Custom reporting schedules are also available.",
+      "category": "technical"
+    },
+    {
+      "id": "account-management",
+      "question": "Will I have a dedicated account manager?",
+      "answer": "Yes, all restaurants are assigned a dedicated account manager who specializes in restaurant advertising. They'll work directly with you on strategy development, campaign optimization, and performance analysis. You'll have direct contact information for reaching them.",
+      "category": "account"
+    },
+    {
+      "id": "integration",
+      "question": "Can ResAds integrate with my restaurant's existing systems?",
+      "answer": "Yes, we offer integration with most common restaurant systems including reservation platforms, POS systems, online ordering solutions, and CRM software. This allows for more accurate conversion tracking and ROI measurement.",
+      "category": "technical"
+    },
+    {
+      "id": "competitors",
+      "question": "Can I target customers who visit competing restaurants?",
+      "answer": "Yes, our competitive conquesting feature allows you to target users who have visited or searched for competing restaurants in your area. This can be especially effective for highlighting your unique offerings or promotions to potential new customers.",
+      "category": "campaigns"
+    }
+  ]
+}

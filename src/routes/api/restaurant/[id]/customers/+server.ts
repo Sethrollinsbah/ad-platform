@@ -1,6 +1,7 @@
 // src/routes/api/restaurant/[id]/customers/+server.ts
 import { json } from '@sveltejs/kit';
-import { query } from '$lib/server/db';
+import { db, schema } from '$lib/server/db';
+import { eq, sql, count, avg, sum } from 'drizzle-orm';
 
 export async function GET({ params }) {
   try {
@@ -10,65 +11,129 @@ export async function GET({ params }) {
       return json({ error: 'Invalid restaurant ID' }, { status: 400 });
     }
     
-    // Query to get customer metrics for the restaurant
-    const metricsResult = await query(
-      `SELECT 
-        COUNT(*) as total_customers,
-        COUNT(CASE WHEN created_at >= CURRENT_DATE - INTERVAL '30 days' THEN 1 END) as new_customers_30d,
-        COUNT(CASE WHEN last_order_date >= CURRENT_DATE - INTERVAL '30 days' THEN 1 END) as active_customers_30d,
-        COALESCE(AVG(order_count), 0) as avg_orders_per_customer,
-        COALESCE(AVG(total_spent), 0) as avg_customer_spend,
-        COALESCE(SUM(total_spent), 0) as total_revenue,
-        COUNT(CASE WHEN order_count > 1 THEN 1 END)::float / NULLIF(COUNT(*), 0) * 100 as repeat_rate
-      FROM customers
-      WHERE restaurant_id = $1`,
-      [restaurantId]
-    );
+    // Get total customer count
+    const totalCustomersResult = await db
+      .select({ count: count() })
+      .from(schema.customers)
+      .where(eq(schema.customers.restaurantId, restaurantId));
+    
+    const totalCustomers = totalCustomersResult[0]?.count || 0;
+    
+    // Get new customers in last 30 days
+    const newCustomers30dResult = await db
+      .select({ count: count() })
+      .from(schema.customers)
+      .where(
+        eq(schema.customers.restaurantId, restaurantId),
+        sql`created_at >= NOW() - INTERVAL '30 days'`
+      );
+    
+    const newCustomers30d = newCustomers30dResult[0]?.count || 0;
+    
+    // Get active customers in last 30 days
+    const activeCustomers30dResult = await db
+      .select({ count: count() })
+      .from(schema.customers)
+      .where(
+        eq(schema.customers.restaurantId, restaurantId),
+        sql`last_order_date >= NOW() - INTERVAL '30 days'`
+      );
+    
+    const activeCustomers30d = activeCustomers30dResult[0]?.count || 0;
+    
+    // Get average orders per customer
+    const avgOrdersResult = await db
+      .select({ avg: avg(schema.customers.orderCount) })
+      .from(schema.customers)
+      .where(eq(schema.customers.restaurantId, restaurantId));
+    
+    const avgOrdersPerCustomer = avgOrdersResult[0]?.avg || 0;
+    
+    // Get average spend per customer
+    const avgSpendResult = await db
+      .select({ avg: avg(schema.customers.totalSpent) })
+      .from(schema.customers)
+      .where(eq(schema.customers.restaurantId, restaurantId));
+    
+    const avgCustomerSpend = avgSpendResult[0]?.avg || 0;
+    
+    // Get total revenue
+    const totalRevenueResult = await db
+      .select({ sum: sum(schema.customers.totalSpent) })
+      .from(schema.customers)
+      .where(eq(schema.customers.restaurantId, restaurantId));
+    
+    const totalRevenue = totalRevenueResult[0]?.sum || 0;
+    
+    // Get repeat rate (customers with more than 1 order)
+    const repeatCustomersResult = await db
+      .select({ count: count() })
+      .from(schema.customers)
+      .where(
+        eq(schema.customers.restaurantId, restaurantId),
+        sql`order_count > 1`
+      );
+    
+    const repeatCustomers = repeatCustomersResult[0]?.count || 0;
+    const repeatRate = totalCustomers > 0 ? (repeatCustomers / totalCustomers) * 100 : 0;
     
     // Get recent customers
-    const recentCustomersResult = await query(
-      `SELECT id, name, email, phone, city, created_at, last_order_date, order_count, total_spent
-      FROM customers
-      WHERE restaurant_id = $1
-      ORDER BY created_at DESC
-      LIMIT 10`,
-      [restaurantId]
-    );
+    const recentCustomers = await db.query.customers.findMany({
+      where: eq(schema.customers.restaurantId, restaurantId),
+      orderBy: [sql`created_at DESC`],
+      limit: 10
+    });
     
     // Get customer acquisition by source
-    const acquisitionResult = await query(
-      `SELECT 
-        acquisition_source, 
-        COUNT(*) as count,
-        COUNT(*)::float / (SELECT COUNT(*) FROM customers WHERE restaurant_id = $1) * 100 as percentage
-      FROM customers
-      WHERE restaurant_id = $1
-      GROUP BY acquisition_source
-      ORDER BY count DESC`,
-      [restaurantId]
-    );
+    const acquisitionSources = await db
+      .select({
+        source: schema.customers.acquisitionSource,
+        count: count(),
+      })
+      .from(schema.customers)
+      .where(eq(schema.customers.restaurantId, restaurantId))
+      .groupBy(schema.customers.acquisitionSource)
+      .orderBy(count());
     
-    // Get customer geographic distribution
-    const geographicResult = await query(
-      `SELECT 
-        city, 
-        COUNT(*) as count,
-        COUNT(*)::float / (SELECT COUNT(*) FROM customers WHERE restaurant_id = $1) * 100 as percentage
-      FROM customers
-      WHERE restaurant_id = $1
-      GROUP BY city
-      ORDER BY count DESC
-      LIMIT 5`,
-      [restaurantId]
-    );
+    // Calculate percentages for acquisition sources
+    const acquisitionWithPercentage = acquisitionSources.map(source => ({
+      acquisition_source: source.source,
+      count: source.count,
+      percentage: totalCustomers > 0 ? (source.count / totalCustomers) * 100 : 0
+    }));
     
-    const metrics = metricsResult.rows[0] || {};
+    // Get geographic distribution
+    const geographicDistribution = await db
+      .select({
+        city: schema.customers.city,
+        count: count(),
+      })
+      .from(schema.customers)
+      .where(eq(schema.customers.restaurantId, restaurantId))
+      .groupBy(schema.customers.city)
+      .orderBy(count())
+      .limit(5);
+    
+    // Calculate percentages for geographic distribution
+    const geographicWithPercentage = geographicDistribution.map(geo => ({
+      city: geo.city,
+      count: geo.count,
+      percentage: totalCustomers > 0 ? (geo.count / totalCustomers) * 100 : 0
+    }));
     
     return json({
-      metrics,
-      recentCustomers: recentCustomersResult.rows,
-      acquisition: acquisitionResult.rows,
-      geographic: geographicResult.rows
+      metrics: {
+        total_customers: totalCustomers,
+        new_customers_30d: newCustomers30d,
+        active_customers_30d: activeCustomers30d,
+        avg_orders_per_customer: avgOrdersPerCustomer,
+        avg_customer_spend: avgCustomerSpend,
+        total_revenue: totalRevenue,
+        repeat_rate: repeatRate
+      },
+      recentCustomers,
+      acquisition: acquisitionWithPercentage,
+      geographic: geographicWithPercentage
     });
   } catch (error) {
     console.error('Error fetching customer metrics:', error);

@@ -19,17 +19,26 @@ export async function POST({ request }) {
     }
     
     // First, find the project ID in the database
-    const projects = await db
+    let projects = await db
       .select()
       .from(schema.projects)
       .where(eq(schema.projects.name, projectId))
       .limit(1);
       
+    // If not found, create the project entry
     if (projects.length === 0) {
-      return json({ 
-        success: false, 
-        error: 'Project not found' 
-      }, { status: 404 });
+      const [newProject] = await db
+        .insert(schema.projects)
+        .values({
+          name: projectId,
+          displayName: projectId,
+          active: true,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+        
+      projects = [newProject];
     }
     
     const dbProjectId = projects[0].id;

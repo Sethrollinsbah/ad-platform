@@ -1,170 +1,109 @@
 // src/routes/api/campaign/[id]/+server.ts
 import { json } from '@sveltejs/kit';
 import { db, schema } from '$lib/server/db';
-import { eq, and, sql } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 
 export async function GET({ params }) {
   try {
-    const campaignId = parseInt(params.id);
+    // Extract campaignId from params
+    const campaignIdParam = params.id;
     
-    if (isNaN(campaignId)) {
-      return json({ error: 'Invalid campaign ID' }, { status: 400 });
+    if (!campaignIdParam) {
+      return json({ error: 'Campaign ID is required' }, { status: 400 });
     }
     
-    // Get detailed campaign data with relationships
-    const campaign = await db.query.campaigns.findFirst({
-      where: eq(schema.campaigns.id, campaignId),
-      with: {
-        // Get associated restaurant
-        restaurant: true,
-        
-        // Get campaign metrics
-        campaignMetrics: {
-          orderBy: [schema.campaignMetrics.date]
-        },
-        
-        // Get platforms with their metrics
-        platforms: {
-          with: {
-            platform: true
-          }
-        }
-      }
-    });
-    
-    if (!campaign) {
+    // First try to find the campaign by name in node ID format
+    const campaigns = await db
+      .select()
+      .from(schema.campaigns)
+      .where(schema.campaigns.name.toLowerCase().like(`%${campaignIdParam.toLowerCase().replace(/-/g, ' ')}%`))
+      .limit(1);
+      
+    if (campaigns.length === 0) {
       return json({ error: 'Campaign not found' }, { status: 404 });
     }
     
-    // Get platform metrics separately
-    const platformMetricsResults = await db
-      .select({
-        platformId: schema.platformMetrics.platformId,
-        impressions: sql`SUM(${schema.platformMetrics.impressions})`,
-        clicks: sql`SUM(${schema.platformMetrics.clicks})`,
-        conversions: sql`SUM(${schema.platformMetrics.conversions})`,
-        spend: sql`SUM(${schema.platformMetrics.spend})`
-      })
-      .from(schema.platformMetrics)
-      .where(eq(schema.platformMetrics.campaignId, campaignId))
-      .groupBy(schema.platformMetrics.platformId);
+    const campaign = campaigns[0];
+    
+    // Get campaign metrics
+    const campaignMetrics = await db
+      .select()
+      .from(schema.campaignMetrics)
+      .where(eq(schema.campaignMetrics.campaignId, campaign.id))
+      .orderBy(schema.campaignMetrics.date);
       
-    // Map platform metrics
-    const platformMetrics = {};
-    platformMetricsResults.forEach(pm => {
-      platformMetrics[pm.platformId] = {
-        impressions: pm.impressions || 0,
-        clicks: pm.clicks || 0,
-        conversions: pm.conversions || 0,
-        spend: pm.spend || 0
-      };
-    });
-    
-    // Calculate campaign total metrics
-    const totalImpressions = campaign.campaignMetrics.reduce(
-      (sum, metric) => sum + (metric.impressions || 0), 0
-    );
-    
-    const totalClicks = campaign.campaignMetrics.reduce(
-      (sum, metric) => sum + (metric.clicks || 0), 0
-    );
-    
-    const totalConversions = campaign.campaignMetrics.reduce(
-      (sum, metric) => sum + (metric.conversions || 0), 0
-    );
-    
-    const ctr = totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0;
-    const conversionRate = totalClicks > 0 ? (totalConversions / totalClicks) * 100 : 0;
-    
-    // Get daily performance data for charts
-    const dailyMetrics = campaign.campaignMetrics.map(metric => ({
-      date: metric.date,
-      impressions: metric.impressions,
-      clicks: metric.clicks,
-      conversions: metric.conversions,
-      spend: metric.spend,
-      ctr: metric.impressions > 0 ? (metric.clicks / metric.impressions) * 100 : 0,
-      cpa: metric.conversions > 0 ? metric.spend / metric.conversions : 0
+    // Get campaign platforms
+    const campaignPlatforms = await db
+      .select({
+        cp: schema.campaignPlatforms,
+        p: schema.platforms
+      })
+      .from(schema.campaignPlatforms)
+      .where(eq(schema.campaignPlatforms.campaignId, campaign.id))
+      .innerJoin(
+        schema.platforms,
+        eq(schema.campaignPlatforms.platformId, schema.platforms.id)
+      );
+      
+    const platforms = campaignPlatforms.map(item => ({
+      id: item.p.id,
+      name: item.p.name,
+      type: item.p.type,
+      isPrimary: item.cp.isPrimary,
+      budgetPercentage: item.cp.budgetPercentage
     }));
     
-    // Get conversion breakdown by type
+    // Calculate aggregate metrics
+    const totalImpressions = campaignMetrics.reduce((sum, m) => sum + (m.impressions || 0), 0);
+    const totalClicks = campaignMetrics.reduce((sum, m) => sum + (m.clicks || 0), 0);
+    const totalConversions = campaignMetrics.reduce((sum, m) => sum + (m.conversions || 0), 0);
+    const totalSpent = campaignMetrics.reduce((sum, m) => sum + (parseFloat(m.spend) || 0), 0);
+    
+    // Calculate performance metrics
+    const ctr = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) : '0.00';
+    const conversionRate = totalClicks > 0 ? ((totalConversions / totalClicks) * 100).toFixed(2) : '0.00';
+    const cpa = totalConversions > 0 ? (totalSpent / totalConversions).toFixed(2) : '0.00';
+    
+    // Format campaign metrics for chart
+    const dailyMetrics = campaignMetrics.map(metric => ({
+      date: metric.date.toISOString().split('T')[0],
+      impressions: metric.impressions || 0,
+      clicks: metric.clicks || 0,
+      conversions: metric.conversions || 0,
+      spend: parseFloat(metric.spend) || 0
+    }));
+    
+    // Generate conversion breakdown
+    // In a real application, this would come from actual data
     const conversionBreakdown = [
-      { type: 'Phone Calls', count: Math.floor(totalConversions * 0.35) },
-      { type: 'Directions', count: Math.floor(totalConversions * 0.25) },
-      { type: 'Website Visits', count: Math.floor(totalConversions * 0.20) },
-      { type: 'Online Orders', count: Math.floor(totalConversions * 0.15) },
-      { type: 'Other', count: totalConversions - 
-                           Math.floor(totalConversions * 0.35) - 
-                           Math.floor(totalConversions * 0.25) - 
-                           Math.floor(totalConversions * 0.20) - 
-                           Math.floor(totalConversions * 0.15) }
+      { type: 'Phone Calls', count: Math.round(totalConversions * 0.35) },
+      { type: 'Directions', count: Math.round(totalConversions * 0.20) },
+      { type: 'Online Orders', count: Math.round(totalConversions * 0.30) },
+      { type: 'Reservations', count: totalConversions - Math.round(totalConversions * 0.35) - Math.round(totalConversions * 0.20) - Math.round(totalConversions * 0.30) }
     ];
     
-    // Format platforms data
-    const platformsData = campaign.platforms.map(cp => {
-      const metrics = platformMetrics[cp.platformId] || {
-        impressions: 0,
-        clicks: 0,
-        conversions: 0,
-        spend: 0
-      };
-      
-      return {
-        id: cp.platformId,
-        name: cp.platform.name,
-        type: cp.platform.type,
-        isPrimary: cp.isPrimary,
-        budgetPercentage: cp.budgetPercentage,
-        metrics: {
-          impressions: metrics.impressions,
-          clicks: metrics.clicks,
-          conversions: metrics.conversions,
-          spend: metrics.spend,
-          ctr: metrics.impressions > 0 ? (metrics.clicks / metrics.impressions) * 100 : 0,
-          cpa: metrics.conversions > 0 ? metrics.spend / metrics.conversions : 0
-        }
-      };
-    });
-    
-    // Calculate ROI (Simplified for demo purposes)
-    // In a real app, this would be based on actual conversion values and revenue
-    const conversionValue = 25; // Average value of a conversion in dollars
-    const totalRevenue = totalConversions * conversionValue;
-    const totalCost = campaign.spent || 0;
-    const roi = totalCost > 0 ? ((totalRevenue - totalCost) / totalCost) * 100 : 0;
-    
-    // Prepare response
+    // Format response
     const response = {
       campaign: {
         id: campaign.id,
         name: campaign.name,
         status: campaign.status,
-        budget: campaign.budget,
-        spent: campaign.spent,
-        startDate: campaign.startDate,
-        endDate: campaign.endDate,
-        restaurant: {
-          id: campaign.restaurant.id,
-          name: campaign.restaurant.name
-        },
+        budget: parseFloat(campaign.budget),
+        spent: parseFloat(campaign.spent || '0'),
+        startDate: campaign.startDate.toISOString().split('T')[0],
+        endDate: campaign.endDate.toISOString().split('T')[0],
         metrics: {
           impressions: totalImpressions,
           clicks: totalClicks,
           conversions: totalConversions,
-          ctr: ctr.toFixed(2),
-          conversionRate: conversionRate.toFixed(2),
-          cpa: totalConversions > 0 ? (totalCost / totalConversions).toFixed(2) : 0
+          ctr,
+          conversionRate,
+          cpa
         }
       },
-      platforms: platformsData,
+      platforms,
       dailyMetrics,
-      conversionBreakdown,
-      roi: {
-        value: roi.toFixed(2),
-        conversions: totalConversions,
-        estimatedRevenue: totalRevenue.toFixed(2),
-        cost: totalCost.toFixed(2)
-      }
+      conversionBreakdown
     };
     
     return json(response);

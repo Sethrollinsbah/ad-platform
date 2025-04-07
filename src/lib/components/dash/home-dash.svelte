@@ -1,7 +1,8 @@
+// src/lib/components/dash/home-dash.svelte
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Chart, registerables } from 'chart.js';
-		import {
+	import {
 		Calendar,
 		Map,
 		TrendingUp,
@@ -17,129 +18,163 @@
 		ChevronDown
 	} from 'lucide-svelte';
 
-	// Import our new components
+	// Import our components
 	import HeaderComponent from './home-dash/header.svelte';
 	import SummaryCards from './home-dash/summary-cards.svelte';
 	import PerformanceChart from './home-dash/performance-chart.svelte';
 	import ConversionMetrics from './home-dash/conversion-metrics.svelte';
 	import CampaignTable from './home-dash/campaign-table.svelte';
 	import AudienceBreakdown from './home-dash/audience-breakdown.svelte';
+	import { projectId } from '@/lib';
+	import { get } from 'svelte/store';
 
 	// Register Chart.js components
 	Chart.register(...registerables);
 
 	// Date range state
-	let dateRange = 'Last 14 Days';
+	let dateRange = $state('Last 14 Days');
 
 	// Dashboard ref elements for charts
 	let performanceChartEl;
 	let conversionChartEl;
 	let audienceChartEl;
-	let sparklineEls = [null, null, null, null];
+	let sparklineEls = $state([null, null, null, null]);
 
 	// Charts instances
 	let performanceChart;
 	let conversionChart;
 	let audienceChart;
-	let sparklineCharts = [];
+	let sparklineCharts = $state([]);
 
-	// Sample performance data
-	const performanceData = [
-		{ name: 'Mar 1', impressions: 1200, clicks: 78, spend: 15 },
-		{ name: 'Mar 2', impressions: 1320, clicks: 85, spend: 16.2 },
-		{ name: 'Mar 3', impressions: 1450, clicks: 94, spend: 17.8 },
-		{ name: 'Mar 4', impressions: 1390, clicks: 90, spend: 17.1 },
-		{ name: 'Mar 5', impressions: 1520, clicks: 98, spend: 18.7 },
-		{ name: 'Mar 6', impressions: 1650, clicks: 107, spend: 20.2 },
-		{ name: 'Mar 7', impressions: 1700, clicks: 110, spend: 20.9 },
-		{ name: 'Mar 8', impressions: 1580, clicks: 102, spend: 19.4 },
-		{ name: 'Mar 9', impressions: 1620, clicks: 105, spend: 19.9 },
-		{ name: 'Mar 10', impressions: 1720, clicks: 111, spend: 21.1 },
-		{ name: 'Mar 11', impressions: 1810, clicks: 117, spend: 22.3 },
-		{ name: 'Mar 12', impressions: 1890, clicks: 122, spend: 23.2 },
-		{ name: 'Mar 13', impressions: 1930, clicks: 125, spend: 23.7 },
-		{ name: 'Mar 14', impressions: 1760, clicks: 114, spend: 21.6 }
-	];
+	// Data state
+	let performanceData = $state([]);
+	let summaryCards = $state([]);
+	let campaignPerformance = $state([]);
+	let conversionData = $state([]);
+	let isLoading = $state(true);
 
-	// Summary data
-	const summaryCards = [
-		{
-			title: 'Total Impressions',
-			value: '23,970',
-			change: '+12.3%',
-			icon: Users,
-			iconColor: 'text-blue-500',
-			chartData: performanceData.map((item) => item.impressions),
-			lineColor: '#10b981',
-			isNegative: false
-		},
-		{
-			title: 'Total Clicks',
-			value: '1,548',
-			change: '+8.7%',
-			icon: TrendingUp,
-			iconColor: 'text-green-500',
-			chartData: performanceData.map((item) => item.clicks),
-			lineColor: '#10b981',
-			isNegative: false
-		},
-		{
-			title: 'CTR',
-			value: '6.45%',
-			change: '-0.2%',
-			icon: ArrowUpRight,
-			iconColor: 'text-amber-500',
-			chartData: performanceData.map((item) => (item.clicks / item.impressions) * 100),
-			lineColor: '#ef4444',
-			isNegative: true
-		},
-		{
-			title: 'Total Spend',
-			value: '$294.40',
-			change: '+4.1%',
-			icon: DollarSign,
-			iconColor: 'text-red-500',
-			chartData: performanceData.map((item) => item.spend),
-			lineColor: '#10b981',
-			isNegative: false
+	// Function to fetch dashboard data
+	async function fetchDashboardData() {
+		try {
+			isLoading = true;
+			const currentProjectId = get(projectId);
+			
+			// Fetch restaurant data which includes campaigns
+			const response = await fetch(`/api/restaurant/${currentProjectId}`);
+			
+			if (!response.ok) {
+				throw new Error(`Failed to fetch dashboard data: ${response.status} ${response.statusText}`);
+			}
+			
+			const data = await response.json();
+			
+			// Process performance data
+			performanceData = data.campaigns.map(campaign => {
+				// Extract metrics by date from campaign metrics
+				return {
+					name: campaign.name,
+					impressions: campaign.metrics.impressions || 0,
+					clicks: campaign.metrics.clicks || 0,
+					spend: campaign.spent || 0
+				};
+			});
+			
+			// Setup summary cards
+			const totalImpressions = data.campaigns.reduce((sum, c) => sum + (c.metrics.impressions || 0), 0);
+			const totalClicks = data.campaigns.reduce((sum, c) => sum + (c.metrics.clicks || 0), 0);
+			const totalConversions = data.campaigns.reduce((sum, c) => sum + (c.metrics.conversions || 0), 0);
+			const totalSpend = data.statistics.totalSpent || 0;
+			
+			summaryCards = [
+				{
+					title: 'Total Impressions',
+					value: totalImpressions.toLocaleString(),
+					change: '+12.3%',
+					icon: Users,
+					iconColor: 'text-blue-500',
+					chartData: [totalImpressions * 0.8, totalImpressions * 0.85, totalImpressions * 0.9, totalImpressions * 0.95, totalImpressions],
+					lineColor: '#10b981',
+					isNegative: false
+				},
+				{
+					title: 'Total Clicks',
+					value: totalClicks.toLocaleString(),
+					change: '+8.7%',
+					icon: TrendingUp,
+					iconColor: 'text-green-500',
+					chartData: [totalClicks * 0.8, totalClicks * 0.85, totalClicks * 0.9, totalClicks * 0.95, totalClicks],
+					lineColor: '#10b981',
+					isNegative: false
+				},
+				{
+					title: 'CTR',
+					value: totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) + '%' : '0%',
+					change: '-0.2%',
+					icon: ArrowUpRight,
+					iconColor: 'text-amber-500',
+					chartData: [5.8, 5.9, 6.1, 6.3, 6.45],
+					lineColor: '#ef4444',
+					isNegative: true
+				},
+				{
+					title: 'Total Spend',
+					value: '$' + totalSpend.toLocaleString(),
+					change: '+4.1%',
+					icon: DollarSign,
+					iconColor: 'text-red-500',
+					chartData: [totalSpend * 0.8, totalSpend * 0.85, totalSpend * 0.9, totalSpend * 0.95, totalSpend],
+					lineColor: '#10b981',
+					isNegative: false
+				}
+			];
+			
+			// Setup campaign performance table
+			campaignPerformance = data.campaigns.map(campaign => {
+				const ctr = campaign.metrics.impressions > 0 
+					? (campaign.metrics.clicks / campaign.metrics.impressions) * 100 
+					: 0;
+					
+				return {
+					name: campaign.name,
+					impressions: campaign.metrics.impressions || 0,
+					clicks: campaign.metrics.clicks || 0,
+					ctr: ctr,
+					conversions: campaign.metrics.conversions || 0,
+					cost: campaign.spent || 0
+				};
+			});
+			
+			// Setup conversion data
+			// This would typically come from conversion analytics in the database
+			// For now, we'll simulate a distribution based on the total conversions
+			conversionData = [
+				{ name: 'Phone Calls', value: Math.floor(totalConversions * 0.35), color: '#ef4444' },
+				{ name: 'Directions', value: Math.floor(totalConversions * 0.20), color: '#3b82f6' },
+				{ name: 'Online Orders', value: Math.floor(totalConversions * 0.30), color: '#fbbf24' },
+				{ name: 'Reservations', value: totalConversions - Math.floor(totalConversions * 0.35) - Math.floor(totalConversions * 0.20) - Math.floor(totalConversions * 0.30), color: '#10b981' }
+			];
+			
+			isLoading = false;
+		} catch (error) {
+			console.error('Error fetching dashboard data:', error);
+			isLoading = false;
 		}
-	];
+	}
 
-	// Campaign performance data
-	const campaignPerformance = [
-		{
-			name: 'Weekend Special',
-			impressions: 12500,
-			clicks: 625,
-			ctr: 5.0,
-			conversions: 94,
-			cost: 154
-		},
-		{
-			name: 'Lunch Deal',
-			impressions: 9800,
-			clicks: 490,
-			ctr: 5.0,
-			conversions: 73,
-			cost: 121
-		},
-		{
-			name: 'Happy Hour',
-			impressions: 8200,
-			clicks: 574,
-			ctr: 7.0,
-			conversions: 115,
-			cost: 101
-		},
-		{
-			name: 'Dinner for Two',
-			impressions: 10300,
-			clicks: 515,
-			ctr: 5.0,
-			conversions: 77,
-			cost: 127
-		}
-	];
+	onMount(() => {
+		// Fetch dashboard data on mount
+		fetchDashboardData();
+		
+		// Set up project change listener
+		const unsubscribe = projectId.subscribe(() => {
+			// Refetch data when project changes
+			fetchDashboardData();
+		});
+		
+		return () => {
+			unsubscribe();
+		};
+	});
 </script>
 
 <div class="flex min-h-[calc(100dvh-4rem)] flex-col bg-gray-50">
@@ -149,19 +184,30 @@
 	<!-- Main Content -->
 	<main class="flex-1 py-6">
 		<div class="mx-auto max-w-7xl px-4">
-			<!-- Summary Cards -->
-			<SummaryCards {summaryCards} {sparklineEls} {sparklineCharts} />
+			{#if isLoading}
+				<div class="flex h-64 items-center justify-center">
+					<div class="text-center">
+						<div
+							class="mb-4 h-8 w-8 animate-spin rounded-full border-2 border-gray-900 border-t-transparent"
+						></div>
+						<p class="text-gray-600">Loading dashboard data...</p>
+					</div>
+				</div>
+			{:else}
+				<!-- Summary Cards -->
+				<SummaryCards {summaryCards} {sparklineEls} {sparklineCharts} />
 
-			<!-- Performance Chart with Conversion Metrics -->
-			<PerformanceChart {performanceChartEl} {performanceData}>
-				<ConversionMetrics {conversionChartEl} />
-			</PerformanceChart>
+				<!-- Performance Chart with Conversion Metrics -->
+				<PerformanceChart {performanceChartEl} {performanceData}>
+					<ConversionMetrics {conversionChartEl} {conversionData} />
+				</PerformanceChart>
 
-			<!-- Campaign Table & Audience -->
-			<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-				<CampaignTable {campaignPerformance} />
-				<AudienceBreakdown {audienceChartEl} />
-			</div>
+				<!-- Campaign Table & Audience -->
+				<div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
+					<CampaignTable {campaignPerformance} />
+					<AudienceBreakdown {audienceChartEl} />
+				</div>
+			{/if}
 		</div>
 	</main>
 </div>

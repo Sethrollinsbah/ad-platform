@@ -46,10 +46,34 @@
 	}
 
 	// Function to navigate to project details
-	function navigateToProject(projectId: string) {
-		selectedProjectId.set(projectId);
-		goto(`/dashboard/${projectId}`);
-	}
+// In src/routes/projects/dashboard-project-components.svelte
+
+// Modified function with proper async/await
+async function navigateToProject(projectId: string) {
+  try {
+    // Make sure projectId is a string and not numeric
+    const id = String(projectId);
+    
+    // Set the selected project ID first
+    selectedProjectId.set(id);
+    
+    // Get the project details
+    const project = $projects.find(p => p.id === id);
+    
+    if (project) {
+      // Navigate to the project dashboard using the project name
+      // Use await to ensure navigation completes
+      await goto(`/dashboard/${project.name}`);
+    } else {
+      // Fallback to using the ID directly
+      await goto(`/dashboard/${id}`);
+    }
+    
+    console.log(`Navigation to project ${id} completed`);
+  } catch (error) {
+    console.error(`Navigation error:`, error);
+  }
+}
 
 	// Function to get active service count
 	function getActiveServiceCount(services) {
@@ -95,7 +119,7 @@
 			dialogOpen = false;
 
 			// Navigate to the new project
-			navigateToProject(newProject.id);
+			await navigateToProject(newProject.id);
 		} catch (error) {
 			console.error('Error creating project:', error);
 			errorMessage = error.message || 'Failed to create project';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Button, buttonVariants } from '$lib/components/ui/button';
+	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import { Label } from '$lib/components/ui/label';
 	import { ChevronDown, Plus } from 'lucide-svelte';
@@ -12,8 +12,8 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 
-	// Import projects from the specified location
-	import { projects, selectedProjectId } from '@/lib';
+	// Import selectedProjectId from the lib
+	import { selectedProjectId } from '@/lib';
 
 	// Define project types
 	type Project = {
@@ -26,24 +26,38 @@
 	let dialogOpen = $state(false);
 	let projectName = $state('');
 	let creationType = $state('fresh'); // 'fresh' or 'duplicate'
+	let isLoading = $state(true);
+	let errorMessage = $state('');
 
 	// Available projects list using Svelte 5's $state
 	let availableProjects = $state<Project[]>([]);
 
-	// Create a derived value for available projects
-	$effect(() => {
-		availableProjects = $projects.map((project) => ({
-			id: project.id,
-			name: project.name
-		}));
-	});
-
-	// Mock data for previous projects
-	const previousProjects = [
-		{ id: 'project1', name: 'Website Redesign' },
-		{ id: 'project2', name: 'Mobile App' },
-		{ id: 'project3', name: 'Marketing Campaign' }
-	];
+	// Fetch projects from the API
+	async function fetchProjects() {
+		try {
+			isLoading = true;
+			errorMessage = '';
+			
+			const response = await fetch('/api/projects');
+			if (!response.ok) {
+				throw new Error(`Failed to fetch projects: ${response.status}`);
+			}
+			
+			const projectsData = await response.json();
+			
+			// Format projects for dropdown
+			availableProjects = projectsData.map(project => ({
+				id: project.id,
+				name: project.name
+			}));
+			
+			isLoading = false;
+		} catch (error) {
+			console.error('Error fetching projects:', error);
+			errorMessage = 'Failed to load projects';
+			isLoading = false;
+		}
+	}
 
 	// Check if selectedProjectId matches URL param
 	$effect(() => {
@@ -53,10 +67,6 @@
 		if ($selectedProjectId !== urlProjectId) {
 			$selectedProjectId = urlProjectId;
 			position = urlProjectId || undefined;
-
-			if (urlProjectId) {
-				console.log(`Setting selected project ID to ${urlProjectId} from URL params`);
-			}
 		}
 	});
 
@@ -139,6 +149,9 @@
 	let cleanup = $state(() => {});
 
 	onMount(() => {
+		// Fetch projects
+		fetchProjects();
+		
 		// Set up keyboard shortcut
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if ((e.key === 'n' || e.key === 'N') && e.ctrlKey) {
@@ -164,91 +177,101 @@
 		if (cleanup) cleanup();
 	});
 
-	function handleCreateProject() {
-		if (creationType === 'fresh') {
-			console.log(`Creating new project: ${projectName}`);
-			// Add the new project to the state
-			const newProject = { id: `project-${Date.now()}`, name: projectName };
-			$projects = [...$projects, newProject];
-
-			// Also add to the imported projects with full structure
-			const newFullProject = {
-				id: newProject.id,
-				name: newProject.name,
-				lastUpdated: new Date(),
-				services: [],
-				active: true
-			};
-			$projects = [...$projects, newFullProject];
-
-			$selectedProjectId = newProject.id;
-		} else {
-			// Clone the selected project with a new ID and name
-			const newProject = { id: `project-${Date.now()}`, name: projectName };
-			$projects = [...$projects, newProject];
-
-			// Find the selected project in the full projects list to duplicate it
-			const sourceProject = $projects.find((p) => p.id === $selectedProjectId);
-			if (sourceProject) {
-				const duplicatedProject = {
-					...sourceProject,
-					id: newProject.id,
-					name: newProject.name,
-					lastUpdated: new Date()
-				};
-				$projects = [...$projects, duplicatedProject];
+	async function handleCreateProject() {
+		if (!projectName.trim()) {
+			errorMessage = 'Project name is required';
+			return;
+		}
+		
+		try {
+			errorMessage = '';
+			
+			const response = await fetch('/api/projects', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ 
+					name: projectName,
+					// If duplicating, include source project ID
+					sourceProjectId: creationType === 'duplicate' ? $selectedProjectId : undefined 
+				})
+			});
+			
+			if (!response.ok) {
+				const data = await response.json();
+				throw new Error(data.error || 'Failed to create project');
 			}
-
+			
+			const newProject = await response.json();
+			
+			// Update available projects
+			availableProjects = [...availableProjects, { id: newProject.id, name: newProject.name }];
+			
+			// Set selected project
 			$selectedProjectId = newProject.id;
+			
+			// Navigate to the new project
+			goto(`/dashboard/${newProject.id}`);
+			
+			// Reset and close dialog
+			projectName = '';
+			dialogOpen = false;
+		} catch (error) {
+			console.error('Error creating project:', error);
+			errorMessage = error.message || 'Failed to create project';
 		}
-
-		// Navigate to the new project if we have a project ID
-		if ($selectedProjectId) {
-			goto(`/dashboard/${$selectedProjectId}`);
-		} else {
-			goto('/projects'); // Fallback to dashboard if no project is selected
-		}
-
-		// Reset form
-		dialogOpen = false;
-		projectName = '';
-		creationType = 'fresh';
-		$selectedProjectId = '';
 	}
 </script>
 
 <Dialog.Root bind:open={dialogOpen}>
 	<DropdownMenu.Root>
 		<DropdownMenu.Trigger class="flex flex-row items-center gap-1">
-			{$selectedProjectId || 'No Project Selected'}<ChevronDown class="size-4 text-sm" />
+			{#if isLoading}
+				Loading...
+			{:else if availableProjects.length === 0}
+				No Projects
+			{:else if position && availableProjects.find(p => p.id === position)}
+				{availableProjects.find(p => p.id === position)?.name || 'Unknown Project'}
+			{:else}
+				Select Project
+			{/if}
+			<ChevronDown class="size-4 text-sm" />
 		</DropdownMenu.Trigger>
 		<DropdownMenu.Content class="w-56">
 			<DropdownMenu.Label>Projects</DropdownMenu.Label>
-			<DropdownMenu.RadioGroup
-				value={position}
-				onValueChange={(projectIdValue) => {
-					// Navigate to the selected project
-					goto(`/dashboard/${projectIdValue}`);
-				}}
-			>
-				{#each $projects as pid}
-					<DropdownMenu.RadioItem class="capitalize" value={pid.id}
-						>{pid.name}</DropdownMenu.RadioItem
-					>
-				{/each}
-			</DropdownMenu.RadioGroup>
+			{#if availableProjects.length === 0}
+				<DropdownMenu.Item class="opacity-50">
+					No projects available
+				</DropdownMenu.Item>
+			{:else}
+				<DropdownMenu.RadioGroup
+					value={position}
+					onValueChange={(projectIdValue) => {
+						// Navigate to the selected project
+						goto(`/dashboard/${projectIdValue}`);
+					}}
+				>
+					{#each availableProjects as project}
+						<DropdownMenu.RadioItem class="capitalize" value={project.id}
+							>{project.name}</DropdownMenu.RadioItem
+						>
+					{/each}
+				</DropdownMenu.RadioGroup>
+			{/if}
 			<DropdownMenu.Separator />
 			<DropdownMenu.Item on:click={() => (dialogOpen = true)}>
 				<Plus class="mr-2 size-4" />
 				<span>New Project</span>
 				<DropdownMenu.Shortcut>Ctrl+N</DropdownMenu.Shortcut>
 			</DropdownMenu.Item>
+			<DropdownMenu.Item on:click={() => goto('/projects')}>
+				<span>Manage Projects</span>
+			</DropdownMenu.Item>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
 	<Dialog.Content class="sm:max-w-[425px]">
 		<Dialog.Header>
 			<Dialog.Title>Create New Project</Dialog.Title>
-			<Dialog.Description>Give your project a name and choose how to create it.</Dialog.Description>
+			<Dialog.Description>Give your project a name to get started with ResAds.</Dialog.Description>
 		</Dialog.Header>
 		<div class="grid gap-6 py-4">
 			<div class="grid grid-cols-1 items-center gap-4">
@@ -256,66 +279,66 @@
 				<Input
 					id="projectName"
 					bind:value={projectName}
-					placeholder="My Awesome Project"
-					class="col-span-3"
+					placeholder="My Restaurant Project"
+					class="w-full"
 					autofocus
 				/>
+				{#if errorMessage}
+					<p class="text-sm text-destructive">{errorMessage}</p>
+				{/if}
 			</div>
 
-			<div class="space-y-4">
-				<Label>Project Type</Label>
-				<RadioGroup.Root
-					value={creationType}
-					onValueChange={(val) => (creationType = val)}
-					class="grid gap-4"
-				>
-					<div class="flex items-start space-x-2">
-						<RadioGroup.Item value="fresh" id="r1" />
-						<div class="grid gap-1.5">
-							<Label for="r1" class="font-medium">Start Fresh</Label>
-							<p class="text-sm text-muted-foreground">
-								Create a new project with blank templates and default settings.
-							</p>
+			{#if availableProjects.length > 0}
+				<div class="space-y-4">
+					<Label>Project Type</Label>
+					<RadioGroup.Root
+						value={creationType}
+						onValueChange={(val) => (creationType = val)}
+						class="grid gap-4"
+					>
+						<div class="flex items-start space-x-2">
+							<RadioGroup.Item value="fresh" id="r1" />
+							<div class="grid gap-1.5">
+								<Label for="r1" class="font-medium">Start Fresh</Label>
+								<p class="text-sm text-muted-foreground">
+									Create a new project with blank templates and default settings.
+								</p>
+							</div>
 						</div>
-					</div>
 
-					<div class="flex items-start space-x-2">
-						<RadioGroup.Item value="duplicate" id="r2" />
-						<div class="grid w-full gap-1.5">
-							<Label for="r2" class="font-medium">Duplicate Existing Project</Label>
-							<p class="text-sm text-muted-foreground">
-								Copy all settings, templates, and configurations from an existing project.
-							</p>
-
-							{#if creationType === 'duplicate'}
-								<div class="mt-2">
-									<Select.Root
-										selected={$selectedProjectId
-											? {
-													value: $selectedProjectId,
-													label:
-														previousProjects.find((p) => p.id === $selectedProjectId)?.name || ''
-												}
-											: undefined}
-										onSelectedChange={(v) => {
-											v && ($selectedProjectId = v.value);
-										}}
-									>
-										<Select.Trigger class="w-full">
-											<Select.Value placeholder="Select a project to duplicate" />
-										</Select.Trigger>
-										<Select.Content>
-											{#each previousProjects as project}
-												<Select.Item value={project.id} label={project.name} />
-											{/each}
-										</Select.Content>
-									</Select.Root>
-								</div>
-							{/if}
+						<div class="flex items-start space-x-2">
+							<RadioGroup.Item value="duplicate" id="r2" />
+							<div class="grid gap-1.5">
+								<Label for="r2" class="font-medium">Duplicate Existing</Label>
+								<p class="text-sm text-muted-foreground">
+									Copy settings and campaigns from an existing project.
+								</p>
+							</div>
 						</div>
-					</div>
-				</RadioGroup.Root>
-			</div>
+					</RadioGroup.Root>
+
+					{#if creationType === 'duplicate'}
+						<div class="mt-2">
+							<Select.Root
+								onSelectedChange={(v) => {
+									if (v) $selectedProjectId = v;
+								}}
+							>
+								<Select.Trigger class="w-full">
+									<Select.Value placeholder="Select a project to duplicate" />
+								</Select.Trigger>
+								<Select.Content>
+									{#each availableProjects as project}
+										<Select.Item value={project.id}>
+											{project.name}
+										</Select.Item>
+									{/each}
+								</Select.Content>
+							</Select.Root>
+						</div>
+					{/if}
+				</div>
+			{/if}
 		</div>
 		<Dialog.Footer class="flex justify-between">
 			<Button variant="outline" on:click={() => (dialogOpen = false)}>Cancel</Button>

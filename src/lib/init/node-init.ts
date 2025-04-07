@@ -2,6 +2,7 @@
 import { projectId, projects } from '@/lib';
 import { registerNodeComponent } from '$lib/registry/node-registry';
 import { addNode } from '$lib/stores/node-store';
+import { get } from 'svelte/store'; // Add this import to get the get() function
 import type { TableNode, CampaignNode, PlatformNode } from '$lib/types/node-types';
 
 // Import the components

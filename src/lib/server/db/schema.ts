@@ -1,5 +1,15 @@
 // src/lib/server/db/schema.ts
-import { pgTable, serial, varchar, decimal, timestamp, boolean, integer, foreignKey } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, decimal, timestamp, boolean, integer, primaryKey } from 'drizzle-orm/pg-core';
+
+// Projects table
+export const projects = pgTable('projects', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull().unique(),
+  displayName: varchar('display_name', { length: 255 }),
+  active: boolean('active').default(true),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow()
+});
 
 // Restaurants table
 export const restaurants = pgTable('restaurants', {
@@ -9,6 +19,7 @@ export const restaurants = pgTable('restaurants', {
   location: varchar('location', { length: 255 }),
   contactEmail: varchar('contact_email', { length: 255 }),
   contactPhone: varchar('contact_phone', { length: 50 }),
+  projectId: integer('project_id').references(() => projects.id),
   createdAt: timestamp('created_at').defaultNow()
 });
 
@@ -22,6 +33,7 @@ export const campaigns = pgTable('campaigns', {
   startDate: timestamp('start_date'),
   endDate: timestamp('end_date'),
   restaurantId: integer('restaurant_id').references(() => restaurants.id),
+  projectId: integer('project_id').references(() => projects.id),
   createdAt: timestamp('created_at').defaultNow()
 });
 
@@ -33,18 +45,15 @@ export const platforms = pgTable('platforms', {
   createdAt: timestamp('created_at').defaultNow()
 });
 
-// Campaign platforms join table
+// Campaign platforms join table - fixed the composite primary key
 export const campaignPlatforms = pgTable('campaign_platforms', {
-  campaignId: integer('campaign_id').references(() => campaigns.id),
-  platformId: integer('platform_id').references(() => platforms.id),
+  campaignId: integer('campaign_id').notNull().references(() => campaigns.id),
+  platformId: integer('platform_id').notNull().references(() => platforms.id),
   isPrimary: boolean('is_primary').default(false),
   budgetPercentage: integer('budget_percentage')
 }, (table) => {
   return {
-    pk: foreignKey({
-      columns: [table.campaignId, table.platformId],
-      foreignColumns: [campaigns.id, platforms.id]
-    })
+    pk: primaryKey({ columns: [table.campaignId, table.platformId] })
   };
 });
 
@@ -84,6 +93,7 @@ export const customers = pgTable('customers', {
   orderCount: integer('order_count').default(0),
   totalSpent: decimal('total_spent', { precision: 10, scale: 2 }).default('0'),
   restaurantId: integer('restaurant_id').references(() => restaurants.id),
+  projectId: integer('project_id').references(() => projects.id),
   createdAt: timestamp('created_at').defaultNow(),
   lastOrderDate: timestamp('last_order_date')
 });
@@ -97,4 +107,16 @@ export const customerConversions = pgTable('customer_conversions', {
   conversionType: varchar('conversion_type', { length: 50 }).notNull(),
   conversionValue: decimal('conversion_value', { precision: 10, scale: 2 }).default('0'),
   conversionDate: timestamp('conversion_date').defaultNow()
+});
+
+// Node configurations by project
+export const nodeConfigurations = pgTable('node_configurations', {
+  id: serial('id').primaryKey(),
+  projectId: integer('project_id').references(() => projects.id),
+  nodeType: varchar('node_type', { length: 50 }).notNull(),
+  nodeId: varchar('node_id', { length: 100 }).notNull(),
+  position: varchar('position', { length: 255 }).notNull(),
+  configuration: varchar('configuration', { length: 4000 }).notNull(),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow()
 });

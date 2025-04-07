@@ -31,6 +31,7 @@ export const load: LayoutServerLoad = async ({ params, fetch }) => {
     .select()
     .from(schema.projects)
     .where(eq(schema.projects.name, projectId));
+  console.log("Projects found: "+projects)
   
   // If the project doesn't exist, redirect to projects page
   if (projects.length === 0) {

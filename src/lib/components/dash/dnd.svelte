@@ -5,11 +5,9 @@
 	import ActivityPanel from './activity-panel.svelte';
 	import CampaignPanel from './campaign-panel.svelte';
 	import CreateButton from './create-button.svelte';
+	import WelcomeScreen from './welcome-screen.svelte'; // New welcome screen component
 	import { nodes, nodeDefinitions } from '@/lib/stores/node-store';
-	import { 
-		registerComponents, 
-		setupProjectChangeListener
-	} from '@/lib/init/project-node-init';
+	import { registerComponents, setupProjectChangeListener } from '@/lib/init/project-node-init';
 	import { projectId } from '@/lib';
 	import { get } from 'svelte/store';
 
@@ -20,6 +18,7 @@
 	let partialInnerHeight = $derived(innerHeight - 4 * 16);
 	let unsubscribe = $state(null);
 	let isLoading = $state(true);
+	let hasNodes = $state(false); // New state to track if nodes exist
 
 	// Add state to track the current project ID
 	let currentProjectId = $state(get(projectId));
@@ -30,16 +29,18 @@
 			isLoading = true;
 			// Clear existing nodes first
 			nodeDefinitions.set([]);
-			
+
 			// Fetch nodes for the current project
-			const response = await fetch(`/api/nodes/position?projectId=${encodeURIComponent(currentProjectId)}`);
-			
+			const response = await fetch(
+				`/api/nodes/position?projectId=${encodeURIComponent(currentProjectId)}`
+			);
+
 			if (!response.ok) {
 				throw new Error(`Failed to fetch nodes: ${response.status} ${response.statusText}`);
 			}
-			
+
 			const data = await response.json();
-			
+
 			if (data.success && data.nodes) {
 				// Add each node to the store
 				data.nodes.forEach((node) => {
@@ -49,79 +50,59 @@
 						position: node.position,
 						data: node.configuration
 					};
-					
+
 					// Add to store
-					nodeDefinitions.update(defs => [...defs, nodeData]);
+					nodeDefinitions.update((defs) => [...defs, nodeData]);
 				});
-				
+
+				// Update hasNodes state
+				hasNodes = data.nodes.length > 0;
+
 				console.log(`Loaded ${data.nodes.length} nodes from database`);
-			} else if (data.nodes && data.nodes.length === 0) {
-				// If no nodes found, fetch default nodes
-				console.log("No nodes found in database, loading default nodes");
-				await initializeDefaultNodes();
+			} else {
+				// No nodes found
+				hasNodes = false;
+				console.log('No nodes found in database.');
 			}
-			
+
 			isLoading = false;
 		} catch (error) {
-			console.error("Error fetching nodes:", error);
-			// In case of error, load default nodes
-			await initializeDefaultNodes();
+			console.error('Error fetching nodes:', error);
+			// In case of error, set hasNodes to false
+			hasNodes = false;
 			isLoading = false;
-		}
-	}
-	
-	// Function to load default nodes and save them to the database
-	async function initializeDefaultNodes() {
-		try {
-			// Call the API endpoint to set up default nodes for this project
-			const response = await fetch(`/api/db/setup`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ projectId: currentProjectId })
-			});
-			
-			if (!response.ok) {
-				throw new Error(`Failed to initialize nodes: ${response.status} ${response.statusText}`);
-			}
-			
-			// After setting up default nodes, fetch them
-			await fetchNodesFromDatabase();
-		} catch (error) {
-			console.error("Error initializing default nodes:", error);
 		}
 	}
 
 	onMount(() => {
 		// Register node components
 		registerComponents();
-		
+
 		// Fetch nodes from database
 		fetchNodesFromDatabase();
-		
+
 		// Set up listener for project changes
 		unsubscribe = setupProjectChangeListener(fetchNodesFromDatabase);
-		
+
 		// Subscribe to project ID changes for UI updates
-		const projectUnsubscribe = projectId.subscribe(newProjectId => {
+		const projectUnsubscribe = projectId.subscribe((newProjectId) => {
 			currentProjectId = newProjectId;
 			// Fetch nodes when project changes
 			fetchNodesFromDatabase();
 		});
-		
+
 		// Set a small timeout to ensure the DOM is fully ready
 		setTimeout(() => {
 			loaded = true;
 		}, 100);
-		
+
 		// Return cleanup function
 		return () => {
 			if (unsubscribe) unsubscribe();
 			projectUnsubscribe();
 		};
 	});
-	
+
 	onDestroy(() => {
 		if (unsubscribe) unsubscribe();
 	});
@@ -133,13 +114,17 @@
 		nodeDefinitions.update((defs) =>
 			defs.map((node) => (node.id === id ? { ...node, position } : node))
 		);
-		
+
 		// Save position to the database
 		await saveNodePosition(id, position, currentProjectId);
 	}
-	
+
 	// Function to save node positions
-	async function saveNodePosition(nodeId: string, position: { x: number, y: number }, projectId: string) {
+	async function saveNodePosition(
+		nodeId: string,
+		position: { x: number; y: number },
+		projectId: string
+	) {
 		try {
 			const response = await fetch('/api/nodes/position', {
 				method: 'POST',
@@ -152,7 +137,7 @@
 					projectId
 				})
 			});
-			
+
 			if (!response.ok) {
 				console.error(`Failed to save node position: ${response.status} ${response.statusText}`);
 			}
@@ -174,6 +159,9 @@
 				<p class="text-gray-600">Loading data from database...</p>
 			</div>
 		</div>
+	{:else if !hasNodes}
+		<!-- Welcome screen when no nodes exist -->
+		<WelcomeScreen  />
 	{:else}
 		<Svelvet
 			width={innerWidth}
@@ -198,7 +186,9 @@
 {/if}
 
 <!-- Project indicator -->
-<div class="absolute bottom-4 left-4 z-10 rounded-md bg-white bg-opacity-80 px-3 py-1 text-sm shadow-sm">
+<div
+	class="absolute bottom-4 left-4 z-10 rounded-md bg-white bg-opacity-80 px-3 py-1 text-sm shadow-sm"
+>
 	Project: {currentProjectId}
 </div>
 

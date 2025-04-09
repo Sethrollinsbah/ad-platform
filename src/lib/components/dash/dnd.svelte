@@ -1,6 +1,5 @@
-<!-- // src/lib/components/dash/dnd.svelte -->
-
 <script lang="ts">
+  import { panzoom } from 'svelte-pan-zoom';
 	import { onMount, onDestroy } from 'svelte';
 	import { nodeDefinitions, updateNodePosition } from '$lib/stores/node-store';
 	import { page } from '$app/stores';
@@ -12,21 +11,15 @@
 	import TableNode from '@/lib/components/svelvet/nodes/table-node.svelte';
 	import Draggable from '@/lib/components/draggable.svelte';
 	import { browser } from '$app/environment';
+	import ActivityPanel from './activity-panel.svelte';
+	import CampaignPanel from './campaign-panel.svelte';
+	import CreateButton from './create-button.svelte';
 
 	// Get project ID from the URL
 	let currentProjectId = $derived($page.params.projectId || '');
 
 	// Set up a container ref
 	let container;
-	let containerRect = { left: 0, top: 0 };
-
-	// Update container dimensions when it mounts or resizes
-	function updateContainerRect() {
-		if (container) {
-			const rect = container.getBoundingClientRect();
-			containerRect = { left: rect.left, top: rect.top };
-		}
-	}
 
 	// Load nodes from the database
 	async function loadNodesFromDB() {
@@ -60,38 +53,14 @@
 
 	// Handle position updates
 	function handlePositionChange(id, position) {
-		updateNodePosition(id, position);
-
-		// Send position update to the server
-		fetch('/api/nodes/position', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				nodeId: id,
-				position,
-				projectId: currentProjectId
-			})
-		}).catch((error) => {
-			console.error('Error updating node position:', error);
-		});
+		// Update the node position in the store
+		updateNodePosition(id, position, currentProjectId);
 	}
 
 	// Initialize
 	onMount(() => {
 		if (browser) {
-			updateContainerRect();
 			loadNodesFromDB();
-
-			// Add window resize listener
-			window.addEventListener('resize', updateContainerRect);
-		}
-	});
-
-	onDestroy(() => {
-		if (browser) {
-			window.removeEventListener('resize', updateContainerRect);
 		}
 	});
 
@@ -119,7 +88,7 @@
 				onPositionChange={handlePositionChange}
 				bounds="parent"
 			>
-				<svelte:component this={getComponentForType(node.type)} nodeId={node.id} data={node.data} />
+				<svelte:component this={getComponentForType(node.type)} id={node.id} {...node.data} />
 			</Draggable>
 		{/if}
 	{/each}
@@ -132,21 +101,31 @@
 	Project: {$page.params.projectId}
 </div>
 
-<!---->
-<!-- <ActivityPanel></ActivityPanel> -->
-<!-- <CampaignPanel></CampaignPanel> -->
-<!-- <CreateButton></CreateButton> -->
+<ActivityPanel></ActivityPanel>
+<CampaignPanel></CampaignPanel>
+<CreateButton></CreateButton>
 
 <style>
 	.dashboard-container {
 		position: relative;
 		width: 100%;
-		height: 100vh;
+		height: calc(100vh - 4rem); /* Adjusts height by subtracting 16rem from the viewport height */
 		overflow: auto;
 		background-color: #f9fafb;
 		background-image:
 			linear-gradient(to right, #e5e7eb 1px, transparent 1px),
 			linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
 		background-size: 20px 20px;
+		overscroll-behavior: contain; /* Prevents navigation gestures */
+		/* Hide scrollbar for WebKit browsers */
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		/* Hide scrollbar for Firefox */
+		scrollbar-width: none;
+
+		/* Hide scrollbar for IE and Edge */
+		-ms-overflow-style: none;
 	}
 </style>

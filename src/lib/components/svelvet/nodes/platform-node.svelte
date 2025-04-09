@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { settingsPanel } from '@/lib';
-	import { Node, Anchor } from 'svelvet';
 
 	// Customizable properties using Svelte 5's $props()
 	let {
@@ -20,7 +19,8 @@
 		mainColor = '#E1306C', // Instagram pink color
 		borderColor = '#000000',
 		shadowColor = '#F5A3C7',
-		backgroundColor = '#FFFFFF'
+		backgroundColor = '#FFFFFF',
+		data = {} // Add default empty object
 	} = $props();
 
 	// Local state using $state
@@ -81,135 +81,96 @@
 	function formatNumber(num: number): string {
 		return num.toLocaleString();
 	}
-	let isDragging = $state(false);
-	let dragStartX = $state(0);
-	let dragStartY = $state(0);
-	const dragThreshold = 5; // Pixels of movement needed to consider it a drag
+
+	// Click handler
+	function handleClick() {
+		settingsPanel.set({ id, type: 'platform' });
+	}
 </script>
 
-<Node useDefaults {id} position={{ x: positionX, y: positionY }}>
+<div
+	role="tooltip"
+	class="platform-node"
+	style="
+		background-color: {backgroundColor}; 
+		border: 4px solid {borderColor};
+		box-shadow: {isHovered ? '10px 10px 0px' : '8px 8px 0px'} {shadowColor};
+	"
+	onmouseenter={() => (isHovered = true)}
+	onmouseleave={() => (isHovered = false)}
+	onclick={handleClick}
+>
+	<!-- Header -->
 	<div
-		role="tooltip"
-		class="platform-node"
-		style="
-            background-color: {backgroundColor}; 
-            border: 4px solid {borderColor};
-            box-shadow: {isHovered ? '10px 10px 0px' : '8px 8px 0px'} {shadowColor};
-        "
-		onmouseenter={() => (isHovered = true)}
-		onmouseleave={() => (isHovered = false)}
-		onmousedown={(e) => {
-			isDragging = false;
-			dragStartX = e.clientX;
-			dragStartY = e.clientY;
-		}}
-		onmousemove={(e) => {
-			// Calculate distance moved
-			const dx = Math.abs(e.clientX - dragStartX);
-			const dy = Math.abs(e.clientY - dragStartY);
-
-			// If moved more than threshold, consider it a drag
-			if (dx > dragThreshold || dy > dragThreshold) {
-				isDragging = true;
-			}
-		}}
-		onmouseup={(e) => {
-			// Only open settings panel if not dragging
-			if (!isDragging) {
-				settingsPanel.set({ id, type: 'platform' });
-			}
-		}}
-		ontouchstart={(e) => {
-			isDragging = false;
-			dragStartX = e.touches[0].clientX;
-			dragStartY = e.touches[0].clientY;
-		}}
-		ontouchmove={(e) => {
-			const dx = Math.abs(e.touches[0].clientX - dragStartX);
-			const dy = Math.abs(e.touches[0].clientY - dragStartY);
-			if (dx > dragThreshold || dy > dragThreshold) {
-				isDragging = true;
-			}
-		}}
-		ontouchend={(e) => {
-			if (!isDragging) {
-				settingsPanel.set({ id, type: 'platform' });
-			}
-		}}
+		class="platform-header"
+		style="background-color: {mainColor}; border-bottom: 4px solid {borderColor};"
 	>
-		<!-- Header -->
+		<div class="platform-icon">{platformIcon}</div>
+		<div class="platform-title">{platformName}</div>
 		<div
-			class="platform-header"
-			style="background-color: {mainColor}; border-bottom: 4px solid {borderColor};"
+			class="platform-type"
+			style="background-color: {platformTypeColors[platformType] ||
+				'#CCCCCC'}; border: 3px solid {borderColor};"
 		>
-			<div class="platform-icon">{platformIcon}</div>
-			<div class="platform-title">{platformName}</div>
-			<div
-				class="platform-type"
-				style="background-color: {platformTypeColors[
-					platformType
-				]}; border: 3px solid {borderColor};"
-			>
-				{platformType}
-			</div>
-		</div>
-
-		<!-- Budget Section -->
-		<div class="platform-section">
-			<div class="section-label">CHANNEL BUDGET</div>
-			<div class="budget-row">
-				<div class="budget-value">${budget}</div>
-				<div class="budget-percentage">{budgetPercentage}%</div>
-			</div>
-
-			<!-- Budget Bar -->
-			<div class="budget-bar-container">
-				<div
-					class="budget-bar-fill"
-					style="width: {budgetPercentage}%; background-color: {mainColor};"
-				></div>
-			</div>
-		</div>
-
-		<!-- Metrics Grid -->
-		<div class="metrics-grid">
-			<div class="metric-item">
-				<div class="metric-value">{formatNumber(impressions)}</div>
-				<div class="metric-label">IMPRESSIONS</div>
-			</div>
-			<div class="metric-item">
-				<div class="metric-value">{formatNumber(clicks)}</div>
-				<div class="metric-label">CLICKS</div>
-			</div>
-			<div class="metric-item">
-				<div class="metric-value">{ctr}%</div>
-				<div class="metric-label">CTR</div>
-			</div>
-			<div class="metric-item">
-				<div class="metric-value">{formatNumber(conversions)}</div>
-				<div class="metric-label">CONV.</div>
-			</div>
-			<div class="metric-item">
-				<div class="metric-value">${costPerClick}</div>
-				<div class="metric-label">CPC</div>
-			</div>
-			<div class="metric-item">
-				<div class="metric-value">${costPerConversion}</div>
-				<div class="metric-label">CPA</div>
-			</div>
-		</div>
-
-		<!-- Channel Strengths -->
-		<div class="channel-strengths">
-			<div class="strengths-label">CHANNEL STRENGTHS</div>
-			<div class="strengths-tags">
-				<div class="strength-tag">Visual Impact</div>
-				<div class="strength-tag">Brand Awareness</div>
-				<div class="strength-tag">Engagement</div>
-			</div>
+			{platformType}
 		</div>
 	</div>
-</Node>
+
+	<!-- Budget Section -->
+	<div class="platform-section">
+		<div class="section-label">CHANNEL BUDGET</div>
+		<div class="budget-row">
+			<div class="budget-value">${budget}</div>
+			<div class="budget-percentage">{budgetPercentage}%</div>
+		</div>
+
+		<!-- Budget Bar -->
+		<div class="budget-bar-container">
+			<div
+				class="budget-bar-fill"
+				style="width: {budgetPercentage}%; background-color: {mainColor};"
+			></div>
+		</div>
+	</div>
+
+	<!-- Metrics Grid -->
+	<div class="metrics-grid">
+		<div class="metric-item">
+			<div class="metric-value">{formatNumber(impressions)}</div>
+			<div class="metric-label">IMPRESSIONS</div>
+		</div>
+		<div class="metric-item">
+			<div class="metric-value">{formatNumber(clicks)}</div>
+			<div class="metric-label">CLICKS</div>
+		</div>
+		<div class="metric-item">
+			<div class="metric-value">{ctr}%</div>
+			<div class="metric-label">CTR</div>
+		</div>
+		<div class="metric-item">
+			<div class="metric-value">{formatNumber(conversions)}</div>
+			<div class="metric-label">CONV.</div>
+		</div>
+		<div class="metric-item">
+			<div class="metric-value">${costPerClick}</div>
+			<div class="metric-label">CPC</div>
+		</div>
+		<div class="metric-item">
+			<div class="metric-value">${costPerConversion}</div>
+			<div class="metric-label">CPA</div>
+		</div>
+	</div>
+
+	<!-- Channel Strengths -->
+	<div class="channel-strengths">
+		<div class="strengths-label">CHANNEL STRENGTHS</div>
+		<div class="strengths-tags">
+			<div class="strength-tag">Visual Impact</div>
+			<div class="strength-tag">Brand Awareness</div>
+			<div class="strength-tag">Engagement</div>
+		</div>
+	</div>
+</div>
 
 <style>
 	.platform-node {

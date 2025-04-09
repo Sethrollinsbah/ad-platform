@@ -1,12 +1,5 @@
-<!-- // Step 1: Install neodrag -->
-<!-- // Run this command in your project directory: -->
-<!-- // npm install @neodrag/svelte -->
-<!---->
-<!-- // Step 2: Create a draggable component wrapper -->
-<!-- // src/lib/components/draggable.svelte -->
-
 <script lang="ts">
-	import { createDraggable } from '@neodrag/svelte';
+	import { draggable } from '@neodrag/svelte';
 
 	// Props
 	let {
@@ -17,14 +10,12 @@
 		disabled = false,
 		grid = undefined,
 		axis = undefined,
-		handle = undefined
+		handle = undefined,
+		children
 	} = $props();
 
-	// State
-	let element;
-
-	// Use neodrag
-	const draggable = createDraggable({
+	// Options for useDraggable
+	let options = {
 		position,
 		onDrag: (event) => {
 			if (onPositionChange) {
@@ -36,20 +27,13 @@
 		grid,
 		axis,
 		handle
-	});
+	};
 </script>
 
-<div bind:this={element} use:draggable class="draggable-item" data-node-id={id}>
-	<slot></slot>
+<div use:draggable={options} class="draggable-item" data-node-id={id}>
+	<!-- <slot></slot> -->
+	{@render children()}
 </div>
-
-<!-- // Step 6: Update package.json to include neodrag dependency -->
-<!---->
-<!-- // In your package.json, add "@neodrag/svelte" to dependencies: -->
-<!-- // "dependencies": { -->
-<!-- //   "@neodrag/svelte": "^2.0.3", -->
-<!-- //   ...other dependencies -->
-<!-- // } -->
 
 <style>
 	.draggable-item {

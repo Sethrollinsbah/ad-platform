@@ -50,3 +50,29 @@ export async function update(tableName: string, id: number, data: Record<string,
     throw error;
   }
 }
+
+// Optionally export this setup to call it once at boot
+export async function setupNotificationTriggers() {
+  await query(`
+    CREATE OR REPLACE FUNCTION notify_node_config_update()
+    RETURNS TRIGGER AS $$
+    BEGIN
+      PERFORM pg_notify(
+        'node_configurations_update',
+        json_build_object(
+          'id', NEW.id,
+          'project_id', NEW.project_id,
+          'updated_at', NEW.updated_at
+        )::text
+      );
+      RETURN NEW;
+    END;
+    $$ LANGUAGE plpgsql;
+
+    DROP TRIGGER IF EXISTS trigger_node_config_update ON node_configurations;
+
+    CREATE TRIGGER trigger_node_config_update
+    AFTER INSERT OR UPDATE OR DELETE ON node_configurations
+    FOR EACH ROW EXECUTE FUNCTION notify_node_config_update();
+  `);
+}

@@ -77,7 +77,7 @@
 		}}
 		ontouchend={(e) => {
 			if (!isDragging) {
-				settingsPanel.set({ id, type: 'table' });
+				settingsPanel.set({ id, type: 'table', data });
 			}
 		}}
 	>

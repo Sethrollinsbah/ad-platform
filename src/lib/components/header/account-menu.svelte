@@ -17,18 +17,18 @@
 	import { Label } from '$lib/components/ui/label/index.js';
 	import * as DropdownMenu from '@/lib/components/ui/dropdown-menu';
 	import Button from '../ui/button/button.svelte';
-	import { selectedProjectId } from '@/lib';
+	import { projectId } from '@/lib';
 
 	let navigationItems = $state([
-		{ icon: LayoutGrid, label: 'Dashboard', href: `/dashboard/${$selectedProjectId}` },
-		{ icon: BarChart3, label: 'Analytics', href: `/dashboard/${$selectedProjectId}/analytics` },
+		{ icon: LayoutGrid, label: 'Dashboard', href: `/dashboard/${$projectId}` },
+		{ icon: BarChart3, label: 'Analytics', href: `/dashboard/${$projectId}/analytics` },
 		{
 			icon: PlusCircle,
 			label: 'New Campaign',
 			href: `?campaign=new`
 		},
-		{ icon: FileText, label: 'Campaigns', href: `/dashboard/${$selectedProjectId}/campaigns` },
-		{ icon: Settings, label: 'Settings', href: `/dashboard/${$selectedProjectId}/settings` }
+		{ icon: FileText, label: 'Campaigns', href: `/dashboard/${$projectId}/campaigns` },
+		{ icon: Settings, label: 'Settings', href: `/dashboard/${$projectId}/settings` }
 	]);
 </script>
 

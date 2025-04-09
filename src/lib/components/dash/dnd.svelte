@@ -10,6 +10,7 @@
 	import { registerComponents, setupProjectChangeListener } from '@/lib/init/project-node-init';
 	import { projectId } from '@/lib';
 	import { get } from 'svelte/store';
+	import { page } from '$app/stores';
 
 	// Use $state for reactive state in Svelte 5
 	let loaded = $state(false);
@@ -21,7 +22,7 @@
 	let hasNodes = $state(false); // New state to track if nodes exist
 
 	// Add state to track the current project ID
-	let currentProjectId = $state(get(projectId));
+	// let currentProjectId = $state(get(projectId));
 
 	// Function to fetch nodes from the database
 	async function fetchNodesFromDatabase() {
@@ -32,7 +33,7 @@
 
 			// Fetch nodes for the current project
 			const response = await fetch(
-				`/api/nodes/position?projectId=${encodeURIComponent(currentProjectId)}`
+				`/api/nodes/position?projectId=${encodeURIComponent($page.params.projectId)}`
 			);
 
 			if (!response.ok) {
@@ -74,49 +75,29 @@
 		}
 	}
 
-	onMount(() => {
+	onMount(async () => {
 		// Register node components
 		registerComponents();
 
 		// Fetch nodes from database
-		fetchNodesFromDatabase();
-
-		// Set up listener for project changes
-		unsubscribe = setupProjectChangeListener(fetchNodesFromDatabase);
-
-		// Subscribe to project ID changes for UI updates
-		const projectUnsubscribe = projectId.subscribe((newProjectId) => {
-			currentProjectId = newProjectId;
-			// Fetch nodes when project changes
-			fetchNodesFromDatabase();
-		});
-
+		await fetchNodesFromDatabase();
 		// Set a small timeout to ensure the DOM is fully ready
 		setTimeout(() => {
 			loaded = true;
 		}, 100);
-
-		// Return cleanup function
-		return () => {
-			if (unsubscribe) unsubscribe();
-			projectUnsubscribe();
-		};
-	});
-
-	onDestroy(() => {
-		if (unsubscribe) unsubscribe();
 	});
 
 	// Handle node position updates
 	async function handleNodeDragStop(event: CustomEvent) {
 		const { id, position } = event.detail;
+		console.log('CONSOLE: ' + event.detail);
 		// Update the node position in our store
 		nodeDefinitions.update((defs) =>
 			defs.map((node) => (node.id === id ? { ...node, position } : node))
 		);
 
 		// Save position to the database
-		await saveNodePosition(id, position, currentProjectId);
+		await saveNodePosition(id, position, $page.params.projectId);
 	}
 
 	// Function to save node positions
@@ -145,6 +126,55 @@
 			console.error('Failed to save node position:', error);
 		}
 	}
+	let socket: WebSocket | null = $state(null);
+
+	onMount(() => {
+		// Connect to your WebSocket server
+		socket = new WebSocket(`ws://[::]:3041/ws?filename=${$page.params.projectId}`);
+
+		// When the connection opens
+		socket.addEventListener('open', () => {
+			console.log('🔌 WebSocket connected');
+		});
+
+		// Handle incoming messages
+		socket.addEventListener('message', (event) => {
+			try {
+				const msg = JSON.parse(event.data);
+				console.log('📨 WebSocket message:', msg.event);
+
+				// Example: reload nodes when update event is received
+				if (msg.event === 'node_config_change') {
+					fetchNodesFromDatabase();
+				}
+			} catch (err) {
+				console.error('❌ Failed to parse WebSocket message:', err);
+			}
+		});
+
+		// Handle errors
+		socket.addEventListener('error', (event) => {
+			console.error('WebSocket error:', event);
+		});
+
+		// Handle disconnect
+		socket.addEventListener('close', () => {
+			console.warn('🛑 WebSocket disconnected');
+		});
+
+		return () => {
+			// Clean up when component unmounts
+			if (socket) {
+				socket.close();
+			}
+		};
+	});
+
+	onDestroy(() => {
+		if (socket) {
+			socket.close();
+		}
+	});
 </script>
 
 <svelte:window bind:innerWidth bind:innerHeight />
@@ -161,7 +191,7 @@
 		</div>
 	{:else if !hasNodes}
 		<!-- Welcome screen when no nodes exist -->
-		<WelcomeScreen  />
+		<WelcomeScreen />
 	{:else}
 		<Svelvet
 			width={innerWidth}
@@ -170,13 +200,15 @@
 			controls
 			minimap
 			on:nodeDragStop={handleNodeDragStop}
+			on:handleNodeDragStop
 		>
-			{#each $nodes as node}
+			{#each $nodes as node, i}
 				<svelte:component
 					this={node.component}
 					{...node.data}
 					data={node.data}
-					position={node.position}
+					positionX={node.position.x}
+					positionY={node.position.y}
 					id={node.id}
 				/>
 			{/each}
@@ -189,7 +221,7 @@
 <div
 	class="absolute bottom-4 left-4 z-10 rounded-md bg-white bg-opacity-80 px-3 py-1 text-sm shadow-sm"
 >
-	Project: {currentProjectId}
+	Project: {$page.params.projectId}
 </div>
 
 <ActivityPanel></ActivityPanel>

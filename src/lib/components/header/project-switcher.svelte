@@ -12,13 +12,15 @@
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 
-	// Import selectedProjectId from the lib
-	import { selectedProjectId } from '@/lib';
+	// Import projectId from the lib
+	import { projectId } from '@/lib';
+	import type { GetProjectsResponse } from '@/routes/api/projects';
 
 	// Define project types
 	type Project = {
 		id: string;
 		name: string;
+		displayName: string;
 	};
 
 	// Current project ID state using Svelte 5's $state
@@ -37,20 +39,21 @@
 		try {
 			isLoading = true;
 			errorMessage = '';
-			
+
 			const response = await fetch('/api/projects');
 			if (!response.ok) {
 				throw new Error(`Failed to fetch projects: ${response.status}`);
 			}
-			
+
 			const projectsData = await response.json();
-			
+
 			// Format projects for dropdown
-			availableProjects = projectsData.map(project => ({
+			availableProjects = projectsData.map((project: GetProjectsResponse) => ({
 				id: project.id,
-				name: project.name
+				name: project.name,
+				displayName: project.displayName
 			}));
-			
+
 			isLoading = false;
 		} catch (error) {
 			console.error('Error fetching projects:', error);
@@ -59,20 +62,20 @@
 		}
 	}
 
-	// Check if selectedProjectId matches URL param
+	// Check if projectId matches URL param
 	$effect(() => {
 		const urlProjectId = $page.params.projectId || '';
 
 		// Only update if they're different to avoid unnecessary state changes
-		if ($selectedProjectId !== urlProjectId) {
-			$selectedProjectId = urlProjectId;
+		if ($projectId !== urlProjectId) {
+			$projectId = urlProjectId;
 			position = urlProjectId || undefined;
 		}
 	});
 
 	// Watch for changes in the page params
 	$effect(() => {
-		$selectedProjectId = $page.params.projectId || '';
+		$projectId = $page.params.projectId || '';
 		position = $page.params.projectId || undefined;
 	});
 
@@ -151,7 +154,7 @@
 	onMount(() => {
 		// Fetch projects
 		fetchProjects();
-		
+
 		// Set up keyboard shortcut
 		const handleKeyDown = (e: KeyboardEvent) => {
 			if ((e.key === 'n' || e.key === 'N') && e.ctrlKey) {
@@ -182,36 +185,39 @@
 			errorMessage = 'Project name is required';
 			return;
 		}
-		
+
 		try {
 			errorMessage = '';
-			
+
 			const response = await fetch('/api/projects', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ 
+				body: JSON.stringify({
 					name: projectName,
 					// If duplicating, include source project ID
-					sourceProjectId: creationType === 'duplicate' ? $selectedProjectId : undefined 
+					sourceProjectId: creationType === 'duplicate' ? $projectId : undefined
 				})
 			});
-			
+
 			if (!response.ok) {
 				const data = await response.json();
 				throw new Error(data.error || 'Failed to create project');
 			}
-			
+
 			const newProject = await response.json();
-			
+
 			// Update available projects
-			availableProjects = [...availableProjects, { id: newProject.id, name: newProject.name }];
-			
+			availableProjects = [
+				...availableProjects,
+				{ id: newProject.id, name: newProject.name, displayName: newProject.displayName }
+			];
+
 			// Set selected project
-			$selectedProjectId = newProject.id;
-			
+			$projectId = newProject.name;
+
 			// Navigate to the new project
-			goto(`/dashboard/${newProject.id}`);
-			
+			goto(`/dashboard/${newProject.name}`);
+
 			// Reset and close dialog
 			projectName = '';
 			dialogOpen = false;
@@ -229,8 +235,8 @@
 				Loading...
 			{:else if availableProjects.length === 0}
 				No Projects
-			{:else if position && availableProjects.find(p => p.id === position)}
-				{availableProjects.find(p => p.id === position)?.name || 'Unknown Project'}
+			{:else if position && availableProjects.find((p) => p.id === position)}
+				{availableProjects.find((p) => p.id === position)?.name || 'Unknown Project'}
 			{:else}
 				Select Project
 			{/if}
@@ -239,15 +245,14 @@
 		<DropdownMenu.Content class="w-56">
 			<DropdownMenu.Label>Projects</DropdownMenu.Label>
 			{#if availableProjects.length === 0}
-				<DropdownMenu.Item class="opacity-50">
-					No projects available
-				</DropdownMenu.Item>
+				<DropdownMenu.Item class="opacity-50">No projects available</DropdownMenu.Item>
 			{:else}
 				<DropdownMenu.RadioGroup
 					value={position}
-					onValueChange={(projectIdValue) => {
+					onValueChange={async (projectIdValue) => {
+						console.log('Project Id: ' + projectIdValue);
 						// Navigate to the selected project
-						goto(`/dashboard/${projectIdValue}`);
+						await goto(`/dashboard/${projectIdValue}`);
 					}}
 				>
 					{#each availableProjects as project}
@@ -321,7 +326,7 @@
 						<div class="mt-2">
 							<Select.Root
 								onSelectedChange={(v) => {
-									if (v) $selectedProjectId = v;
+									if (v) $projectId = v;
 								}}
 							>
 								<Select.Trigger class="w-full">
@@ -331,6 +336,7 @@
 									{#each availableProjects as project}
 										<Select.Item value={project.id}>
 											{project.name}
+											{JSON.stringify(availableProjects)}
 										</Select.Item>
 									{/each}
 								</Select.Content>
@@ -345,7 +351,7 @@
 			<Button
 				type="submit"
 				on:click={handleCreateProject}
-				disabled={!projectName.trim() || (creationType === 'duplicate' && !$selectedProjectId)}
+				disabled={!projectName.trim() || (creationType === 'duplicate' && !$projectId)}
 			>
 				Create Project
 			</Button>

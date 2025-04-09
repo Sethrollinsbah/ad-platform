@@ -10,12 +10,13 @@
 	import { Play, Pause, Calendar, Server, Plus } from 'lucide-svelte';
 	import { formatDistanceToNow } from 'date-fns';
 	import type { Writable } from 'svelte/store';
-	import { selectedProjectId } from '@/lib';
+	import { projectId } from '@/lib';
 
 	// Define project types
 	type Project = {
 		id: string;
 		name: string;
+		displayName: string;
 		lastUpdated: Date;
 		services: {
 			id: string;
@@ -46,34 +47,27 @@
 	}
 
 	// Function to navigate to project details
-// In src/routes/projects/dashboard-project-components.svelte
+	// In src/routes/projects/dashboard-project-components.svelte
 
-// Modified function with proper async/await
-async function navigateToProject(projectId: string) {
-  try {
-    // Make sure projectId is a string and not numeric
-    const id = String(projectId);
-    
-    // Set the selected project ID first
-    selectedProjectId.set(id);
-    
-    // Get the project details
-    const project = $projects.find(p => p.id === id);
-    
-    if (project) {
-      // Navigate to the project dashboard using the project name
-      // Use await to ensure navigation completes
-      await goto(`/dashboard/${project.name}`);
-    } else {
-      // Fallback to using the ID directly
-      await goto(`/dashboard/${id}`);
-    }
-    
-    console.log(`Navigation to project ${id} completed`);
-  } catch (error) {
-    console.error(`Navigation error:`, error);
-  }
-}
+	// Modified function with proper async/await
+	async function navigateToProject(id) {
+		try {
+			// Make sure projectId is a string and not numeric
+			// Set the selected project ID first
+			const project = $projects.find((p) => p.id === id);
+
+			if (project) {
+				// Navigate to the project dashboard using the project name
+				// Use await to ensure navigation completes
+				await goto(`/dashboard/${project.name}`);
+				console.log(`Navigation to project ${project.displayName} completed`);
+			}
+
+			console.error(`Navigation to project failed`);
+		} catch (error) {
+			console.error(`Navigation error:`, error);
+		}
+	}
 
 	// Function to get active service count
 	function getActiveServiceCount(services) {
@@ -227,7 +221,7 @@ async function navigateToProject(projectId: string) {
 							<Button
 								variant="outline"
 								class="flex-grow"
-								on:click={() => navigateToProject(project.id)}
+								on:click={async () => await navigateToProject(project.id)}
 							>
 								View Details
 							</Button>

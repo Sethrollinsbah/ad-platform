@@ -27,20 +27,6 @@
 				color: '#E1306C',
 				description: 'Visual platform for food pics'
 			},
-			{
-				id: 'email-marketing',
-				name: 'Email Marketing',
-				icon: Send,
-				color: '#D54B3D',
-				description: 'Direct email campaigns to customers'
-			},
-			{
-				id: 'local-display',
-				name: 'Local Display',
-				icon: Store,
-				color: '#34A853',
-				description: 'Ads on local websites and apps'
-			}
 		]
 	} = $props();
 </script>

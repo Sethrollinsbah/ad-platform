@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 
 	// Use $state for reactive variables in Svelte 5
-	let isOpen = $state(true);
+	let isOpen = $state(false);
 
 	interface HistoryItem {
 		project: string; // Changed from String to string for TypeScript conventions

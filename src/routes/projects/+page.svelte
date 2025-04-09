@@ -3,7 +3,7 @@
 	import type { PageData } from './$types';
 	import { onMount } from 'svelte';
 	import DashboardProjectComponents from './dashboard-project-components.svelte';
-	import { selectedProjectId } from '@/lib';
+	import { projectId } from '@/lib';
 
 	export let data: PageData;
 
@@ -51,8 +51,8 @@
 
 			// If we're toggling a project to inactive and it's currently selected,
 			// clear the selected project
-			if (!updatedProject.active && $selectedProjectId === updatedProject.id) {
-				selectedProjectId.set('');
+			if (!updatedProject.active && $projectId === updatedProject.id) {
+				projectId.set('');
 			}
 		} catch (error) {
 			console.error('Error updating project:', error);

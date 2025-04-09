@@ -26,8 +26,7 @@ export * from './registry/node-registry';
 export * from './init/node-init';
 
 // Project ID store - used throughout the application to identify the current project
-export let projectId = writable<String>("");
-export let selectedProjectId = writable<String>("");
+export let projectId = writable<string>("");
 
 // Empty projects store - this is no longer used as we're loading from the database
 // but kept for backward compatibility

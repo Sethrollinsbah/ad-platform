@@ -1,9 +1,6 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
 	import { quintOut } from 'svelte/easing';
 	import { fly } from 'svelte/transition';
-
-	const dispatch = createEventDispatcher();
 
 	let animating = false;
 	let clicking = false;

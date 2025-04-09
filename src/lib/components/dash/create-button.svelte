@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { projectId } from '$lib';
+	import { page } from '$app/stores';
 	import * as Dialog from '$lib/components/ui/dialog/index.js';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { addNode } from '$lib/stores/node-store';
@@ -56,7 +58,7 @@
 			}
 		};
 
-		addNode(newTable);
+		addNode(newTable, $page.params.projectId);
 		isDialogOpen = false;
 	}
 
@@ -103,7 +105,7 @@
 			}
 		};
 
-		addNode(newCampaign);
+		addNode(newCampaign, $projectId);
 		isDialogOpen = false;
 	}
 
@@ -118,8 +120,25 @@
 				budgetPercentage: 30,
 				mainColor: '#4285F4',
 				shadowColor: '#A4C2F4'
+			},
+			'meta-ads': {
+				platformName: 'Meta',
+				platformType: 'Social',
+				platformIcon: '📘',
+				budget: 400,
+				budgetPercentage: 25,
+				mainColor: '#1877F2',
+				shadowColor: '#A5C8FA'
+			},
+			'instagram-ads': {
+				platformName: 'Instagram',
+				platformType: 'Social',
+				platformIcon: '📸',
+				budget: 300,
+				budgetPercentage: 20,
+				mainColor: '#E1306C',
+				shadowColor: '#F8A3C0'
 			}
-			// ... other platform definitions
 		};
 
 		const platformConfig = platformData[platformType] || {
@@ -146,7 +165,7 @@
 			}
 		};
 
-		addNode(newPlatform);
+		addNode(newPlatform, $projectId);
 		isDialogOpen = false;
 	}
 

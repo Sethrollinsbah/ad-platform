@@ -7,7 +7,7 @@
 	import { cn } from '$lib/utils';
 	import Notifications from '@/lib/components/header/notifications.svelte';
 	import ProjectSwitcher from '@/lib/components/header/project-switcher.svelte';
-	import { selectedProjectId } from '@/lib';
+	import { projectId } from '@/lib';
 	import AccountMenu from '@/lib/components/header/account-menu.svelte';
 
 	// Window width state

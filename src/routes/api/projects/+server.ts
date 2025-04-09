@@ -1,32 +1,29 @@
 // src/routes/api/projects/+server.ts
-import { json } from '@sveltejs/kit';
+import { json, type RequestHandler } from '@sveltejs/kit';
+import type { ProjectResponse } from '.'; // Assuming you defined the type separately
 import { db, schema } from '$lib/server/db';
 
-export async function GET() {
+export const GET: RequestHandler = async () => {
   try {
-    // Fetch all projects from the database
     const projects = await db.query.projects.findMany({
       orderBy: [schema.projects.updatedAt],
-      // Include services info in future versions when schema supports it
     });
-    
-    // Transform dates and add default services if needed
-    const formattedProjects = projects.map(project => ({
+
+    const formattedProjects: ProjectResponse = projects.map(project => ({
       id: project.id.toString(),
-      name: project.displayName || project.name,
+      name: project.name || project.displayName,
+      displayName: project.displayName || project.name, // Fixed typo here
       lastUpdated: project.updatedAt,
-      // In a full implementation, we'd fetch services from a related table
-      // For now, we'll provide a placeholder array
-      services: [],
+      services: [], // Placeholder
       active: project.active || false
     }));
-    
+
     return json(formattedProjects);
   } catch (error) {
     console.error('Error fetching projects:', error);
     return json({ error: 'Failed to fetch projects' }, { status: 500 });
   }
-}
+};
 
 export async function POST({ request }) {
   try {

@@ -107,36 +107,33 @@ export function updateNode(id: string, updates: Partial<Omit<Node, 'id' | 'compo
   }));
 }
 
-/**
- * Update a node's position
- * @param id The ID of the node to update
- * @param position The new position
- */
-export function updateNodePosition(id: string, position: { x: number; y: number }): void {
-  nodeDefinitions.update(nodes => nodes.map(node => {
-    if (node.id === id) {
-        let updatedNode: Node | undefined;
+// Step 4: Update the node-store.ts
+// Fix the updateNodePosition function which had a syntax error
+
+// src/lib/stores/node-store.ts (partial update)
+export function updateNodePosition(id: string, position: { x: number; y: number }, projectId?: string): void {
+  let updatedNode: Omit<Node, 'component'> | undefined;
 
   // Update the store optimistically
   nodeDefinitions.update(nodes =>
     nodes.map(node => {
       if (node.id === id) {
-        updatedNode = { ...node, ...updates };
+        updatedNode = { ...node, position };
         return updatedNode;
       }
       return node;
     })
   );
 
-  // Send update to backend if position was updated
-  if (updatedNode?.position) {
-    return fetch('/api/nodes/position', {
+  // Send update to backend if we have a project ID
+  if (updatedNode?.position && projectId) {
+    fetch('/api/nodes/position', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        nodeId: updatedNode.id,
+        nodeId: id,
         position: updatedNode.position,
         projectId
       })
@@ -147,20 +144,67 @@ export function updateNodePosition(id: string, position: { x: number; y: number 
         }
         return response.json();
       })
-      .then(data => {
-        // Optionally handle the response data
-        // console.log('Position updated:', data);
-      })
       .catch(error => {
         console.error('Error updating node position:', error);
       });
   }
-
-      return { ...node, position };
-    }
-    return node;
-  }));
 }
+
+
+/**
+ * Update a node's position
+ * @param id The ID of the node to update
+ * @param position The new position
+ */
+// export function updateNodePosition(id: string, position: { x: number; y: number }): void {
+//   nodeDefinitions.update(nodes => nodes.map(node => {
+//     if (node.id === id) {
+//         let updatedNode: Node | undefined;
+//
+//   // Update the store optimistically
+//   nodeDefinitions.update(nodes =>
+//     nodes.map(node => {
+//       if (node.id === id) {
+//         updatedNode = { ...node, ...updates };
+//         return updatedNode;
+//       }
+//       return node;
+//     })
+//   );
+//
+//   // Send update to backend if position was updated
+//   if (updatedNode?.position) {
+//     return fetch('/api/nodes/position', {
+//       method: 'POST',
+//       headers: {
+//         'Content-Type': 'application/json'
+//       },
+//       body: JSON.stringify({
+//         nodeId: updatedNode.id,
+//         position: updatedNode.position,
+//         projectId
+//       })
+//     })
+//       .then(response => {
+//         if (!response.ok) {
+//           throw new Error(`Failed to update position: ${response.status}`);
+//         }
+//         return response.json();
+//       })
+//       .then(data => {
+//         // Optionally handle the response data
+//         // console.log('Position updated:', data);
+//       })
+//       .catch(error => {
+//         console.error('Error updating node position:', error);
+//       });
+//   }
+//
+//       return { ...node, position };
+//     }
+//     return node;
+//   }));
+// }
 
 /**
  * Get a node by ID

@@ -6,7 +6,7 @@ import { get } from 'svelte/store'; // Add this import to get the get() function
 import type { TableNode, CampaignNode, PlatformNode } from '$lib/types/node-types';
 
 // Import the components
-import DbTable from '$lib/components/svelvet/nodes/db-table.svelte';
+import TableNode from '$lib/components/svelvet/nodes/table-node.svelte';
 import CampaignNode from '$lib/components/svelvet/nodes/campaign-node.svelte';
 import PlatformNode from '$lib/components/svelvet/nodes/platform-node.svelte';
 
@@ -14,7 +14,7 @@ import PlatformNode from '$lib/components/svelvet/nodes/platform-node.svelte';
  * Register all node components
  */
 export function registerComponents(): void {
-  registerNodeComponent('table', DbTable);
+  registerNodeComponent('table', TableNode);
   registerNodeComponent('campaign', CampaignNode);
   registerNodeComponent('platform', PlatformNode);
 }

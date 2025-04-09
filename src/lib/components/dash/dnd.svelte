@@ -1,221 +1,129 @@
-<!-- src/lib/components/dash/dnd.svelte -->
+<!-- // src/lib/components/dash/dnd.svelte -->
+
 <script lang="ts">
-	import { Background, Svelvet } from 'svelvet';
 	import { onMount, onDestroy } from 'svelte';
-	import ActivityPanel from './activity-panel.svelte';
-	import CampaignPanel from './campaign-panel.svelte';
-	import CreateButton from './create-button.svelte';
-	import WelcomeScreen from './welcome-screen.svelte'; // New welcome screen component
-	import { nodes, nodeDefinitions } from '@/lib/stores/node-store';
-	import { registerComponents, setupProjectChangeListener } from '@/lib/init/project-node-init';
-	import { projectId } from '@/lib';
-	import { get } from 'svelte/store';
+	import { nodeDefinitions, updateNodePosition } from '$lib/stores/node-store';
 	import { page } from '$app/stores';
+	import { projectId } from '$lib';
 
-	// Use $state for reactive state in Svelte 5
-	let loaded = $state(false);
-	let innerHeight = $state(0);
-	let innerWidth = $state(0);
-	let partialInnerHeight = $derived(innerHeight - 4 * 16);
-	let unsubscribe = $state(null);
-	let isLoading = $state(true);
-	let hasNodes = $state(false); // New state to track if nodes exist
+	// Import your node components here
+	import CampaignNode from '@/lib/components/svelvet/nodes/campaign-node.svelte';
+	import PlatformNode from '@/lib/components/svelvet/nodes/platform-node.svelte';
+	import TableNode from '@/lib/components/svelvet/nodes/table-node.svelte';
+	import Draggable from '@/lib/components/draggable.svelte';
+	import { browser } from '$app/environment';
 
-	// Add state to track the current project ID
-	// let currentProjectId = $state(get(projectId));
+	// Get project ID from the URL
+	let currentProjectId = $derived($page.params.projectId || '');
 
-	// Function to fetch nodes from the database
-	async function fetchNodesFromDatabase() {
+	// Set up a container ref
+	let container;
+	let containerRect = { left: 0, top: 0 };
+
+	// Update container dimensions when it mounts or resizes
+	function updateContainerRect() {
+		if (container) {
+			const rect = container.getBoundingClientRect();
+			containerRect = { left: rect.left, top: rect.top };
+		}
+	}
+
+	// Load nodes from the database
+	async function loadNodesFromDB() {
 		try {
-			isLoading = true;
-			// Clear existing nodes first
-			nodeDefinitions.set([]);
-
-			// Fetch nodes for the current project
 			const response = await fetch(
-				`/api/nodes/position?projectId=${encodeURIComponent($page.params.projectId)}`
+				`/api/nodes/position?projectId=${encodeURIComponent(currentProjectId)}`
 			);
-
-			if (!response.ok) {
-				throw new Error(`Failed to fetch nodes: ${response.status} ${response.statusText}`);
-			}
-
 			const data = await response.json();
 
 			if (data.success && data.nodes) {
-				// Add each node to the store
+				// Clear existing nodes
+				nodeDefinitions.set([]);
+
+				// Add nodes from the database
 				data.nodes.forEach((node) => {
-					const nodeData = {
-						id: node.id,
-						type: node.type,
-						position: node.position,
-						data: node.configuration
-					};
-
-					// Add to store
-					nodeDefinitions.update((defs) => [...defs, nodeData]);
+					nodeDefinitions.update((nodes) => [
+						...nodes,
+						{
+							id: node.id,
+							type: node.type,
+							position: node.position,
+							data: node.configuration
+						}
+					]);
 				});
-
-				// Update hasNodes state
-				hasNodes = data.nodes.length > 0;
-
-				console.log(`Loaded ${data.nodes.length} nodes from database`);
-			} else {
-				// No nodes found
-				hasNodes = false;
-				console.log('No nodes found in database.');
 			}
-
-			isLoading = false;
 		} catch (error) {
-			console.error('Error fetching nodes:', error);
-			// In case of error, set hasNodes to false
-			hasNodes = false;
-			isLoading = false;
+			console.error('Error loading nodes:', error);
 		}
 	}
 
-	onMount(async () => {
-		// Register node components
-		registerComponents();
+	// Handle position updates
+	function handlePositionChange(id, position) {
+		updateNodePosition(id, position);
 
-		// Fetch nodes from database
-		await fetchNodesFromDatabase();
-		// Set a small timeout to ensure the DOM is fully ready
-		setTimeout(() => {
-			loaded = true;
-		}, 100);
-	});
-
-	// Handle node position updates
-	async function handleNodeDragStop(event: CustomEvent) {
-		const { id, position } = event.detail;
-		console.log('CONSOLE: ' + event.detail);
-		// Update the node position in our store
-		nodeDefinitions.update((defs) =>
-			defs.map((node) => (node.id === id ? { ...node, position } : node))
-		);
-
-		// Save position to the database
-		await saveNodePosition(id, position, $page.params.projectId);
+		// Send position update to the server
+		fetch('/api/nodes/position', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				nodeId: id,
+				position,
+				projectId: currentProjectId
+			})
+		}).catch((error) => {
+			console.error('Error updating node position:', error);
+		});
 	}
 
-	// Function to save node positions
-	async function saveNodePosition(
-		nodeId: string,
-		position: { x: number; y: number },
-		projectId: string
-	) {
-		try {
-			const response = await fetch('/api/nodes/position', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					nodeId,
-					position,
-					projectId
-				})
-			});
-
-			if (!response.ok) {
-				console.error(`Failed to save node position: ${response.status} ${response.statusText}`);
-			}
-		} catch (error) {
-			console.error('Failed to save node position:', error);
-		}
-	}
-	let socket: WebSocket | null = $state(null);
-
+	// Initialize
 	onMount(() => {
-		// Connect to your WebSocket server
-		socket = new WebSocket(`ws://[::]:3041/ws?filename=${$page.params.projectId}`);
+		if (browser) {
+			updateContainerRect();
+			loadNodesFromDB();
 
-		// When the connection opens
-		socket.addEventListener('open', () => {
-			console.log('🔌 WebSocket connected');
-		});
-
-		// Handle incoming messages
-		socket.addEventListener('message', (event) => {
-			try {
-				const msg = JSON.parse(event.data);
-				console.log('📨 WebSocket message:', msg.event);
-
-				// Example: reload nodes when update event is received
-				if (msg.event === 'node_config_change') {
-					fetchNodesFromDatabase();
-				}
-			} catch (err) {
-				console.error('❌ Failed to parse WebSocket message:', err);
-			}
-		});
-
-		// Handle errors
-		socket.addEventListener('error', (event) => {
-			console.error('WebSocket error:', event);
-		});
-
-		// Handle disconnect
-		socket.addEventListener('close', () => {
-			console.warn('🛑 WebSocket disconnected');
-		});
-
-		return () => {
-			// Clean up when component unmounts
-			if (socket) {
-				socket.close();
-			}
-		};
+			// Add window resize listener
+			window.addEventListener('resize', updateContainerRect);
+		}
 	});
 
 	onDestroy(() => {
-		if (socket) {
-			socket.close();
+		if (browser) {
+			window.removeEventListener('resize', updateContainerRect);
 		}
 	});
+
+	// Get component based on node type
+	function getComponentForType(type) {
+		switch (type) {
+			case 'campaign':
+				return CampaignNode;
+			case 'platform':
+				return PlatformNode;
+			case 'table':
+				return TableNode;
+			default:
+				return null;
+		}
+	}
 </script>
 
-<svelte:window bind:innerWidth bind:innerHeight />
-
-{#if loaded}
-	{#if isLoading}
-		<div class="flex h-full w-full items-center justify-center">
-			<div class="text-center">
-				<div
-					class="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-2 border-gray-900 border-t-transparent"
-				></div>
-				<p class="text-gray-600">Loading data from database...</p>
-			</div>
-		</div>
-	{:else if !hasNodes}
-		<!-- Welcome screen when no nodes exist -->
-		<WelcomeScreen />
-	{:else}
-		<Svelvet
-			width={innerWidth}
-			height={partialInnerHeight}
-			fitView
-			controls
-			minimap
-			on:nodeDragStop={handleNodeDragStop}
-			on:handleNodeDragStop
-		>
-			{#each $nodes as node, i}
-				<svelte:component
-					this={node.component}
-					{...node.data}
-					data={node.data}
-					positionX={node.position.x}
-					positionY={node.position.y}
-					id={node.id}
-				/>
-			{/each}
-			<Background slot="background" dotSize={2} dotColor="black" />
-		</Svelvet>
-	{/if}
-{/if}
+<div class="dashboard-container" bind:this={container}>
+	{#each $nodeDefinitions as node (node.id)}
+		{#if getComponentForType(node.type)}
+			<Draggable
+				id={node.id}
+				position={node.position}
+				onPositionChange={handlePositionChange}
+				bounds="parent"
+			>
+				<svelte:component this={getComponentForType(node.type)} nodeId={node.id} data={node.data} />
+			</Draggable>
+		{/if}
+	{/each}
+</div>
 
 <!-- Project indicator -->
 <div
@@ -224,6 +132,21 @@
 	Project: {$page.params.projectId}
 </div>
 
-<ActivityPanel></ActivityPanel>
-<CampaignPanel></CampaignPanel>
-<CreateButton></CreateButton>
+<!---->
+<!-- <ActivityPanel></ActivityPanel> -->
+<!-- <CampaignPanel></CampaignPanel> -->
+<!-- <CreateButton></CreateButton> -->
+
+<style>
+	.dashboard-container {
+		position: relative;
+		width: 100%;
+		height: 100vh;
+		overflow: auto;
+		background-color: #f9fafb;
+		background-image:
+			linear-gradient(to right, #e5e7eb 1px, transparent 1px),
+			linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
+		background-size: 20px 20px;
+	}
+</style>

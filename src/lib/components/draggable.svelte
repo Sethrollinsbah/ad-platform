@@ -16,12 +16,12 @@
 
 	// Options for useDraggable
 	let options = {
-		position,
-		onDrag: (event) => {
-			if (onPositionChange) {
-				onPositionChange(id, event.position);
-			}
-		},
+		defaultPosition: position,
+		// onDrag: (event) => {
+		// 	if (onPositionChange) {
+		// 		onPositionChange(id, event.position);
+		// 	}
+		// },
 		bounds,
 		disabled,
 		grid,

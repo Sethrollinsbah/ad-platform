@@ -85,7 +85,7 @@
 {:else if type === 'table'}
 	<DbTable
 		id={tableId}
-		positionX={tablePositionX}
+		bind:positionX={tablePositionX}
 		positionY={tablePositionY}
 		headingText={tableHeadingText}
 		headingColor={tableHeadingColor}

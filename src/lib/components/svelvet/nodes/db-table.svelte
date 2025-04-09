@@ -6,7 +6,7 @@
 	// Customizable properties using Svelte 5's $props()
 	let {
 		id = 'films',
-		positionX = 1090,
+		positionX = $bindable(1090),
 		positionY = 150,
 		headingText = 'Films',
 		headingColor = '#FF5252',
@@ -89,7 +89,7 @@
                     border-bottom: 3px solid {borderColor};
                 "
 			>
-				{headingText}
+				{positionX}
 			</div>
 
 			<Table.Root id="{id}Table" class="db-table">

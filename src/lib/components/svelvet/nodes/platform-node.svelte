@@ -20,10 +20,7 @@
 		mainColor = '#E1306C', // Instagram pink color
 		borderColor = '#000000',
 		shadowColor = '#F5A3C7',
-		backgroundColor = '#FFFFFF',
-		anchorDirection = 'west',
-		anchorTop = 70,
-		anchorLeft = -16
+		backgroundColor = '#FFFFFF'
 	} = $props();
 
 	// Local state using $state
@@ -31,7 +28,6 @@
 
 	// Calculate metrics
 	const ctr = ((clicks / impressions) * 100).toFixed(1);
-	const convRate = ((conversions / clicks) * 100).toFixed(1);
 
 	// Platform color mapping
 	const platformColors = {

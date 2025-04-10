@@ -441,9 +441,9 @@
 	}
 </script>
 
-<div class="dashboard-container" bind:this={container}>
+<div class="dashboard-container h-full w-full" bind:this={container}>
 	<div
-		class="canvas bg-black"
+		class="canvas"
 		bind:this={canvas}
 		style="transform: translate({panX}px, {panY}px) scale({scale})"
 	>
@@ -453,7 +453,7 @@
 					id={node.id}
 					position={node.position}
 					onPositionChange={handlePositionChange}
-					bounds="parent"
+					bounds=".dashboard-container"
 				>
 					<svelte:component this={getComponentForType(node.type)} id={node.id} {...node.data} />
 				</Draggable>
@@ -497,10 +497,12 @@
 
 <style>
 	.dashboard-container {
-		position: relative;
-		width: 100%;
-		height: 100%; /* Adjusts height by subtracting 4rem from the viewport height */
-		overflow: hidden; /* Changed from auto to hidden for pan-zoom */
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		overflow: hidden;
 		background-color: #f9fafb;
 		background-image:
 			linear-gradient(to right, #e5e7eb 1px, transparent 1px),

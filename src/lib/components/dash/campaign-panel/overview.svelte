@@ -8,6 +8,7 @@
 	import * as Progress from '$lib/components/ui/progress';
 	import { Badge } from '$lib/components/ui/badge';
 	import OverviewTable from './overview-table.svelte';
+	import OverviewCampaign from './overview-campaign.svelte';
 
 	let campaignData = $state(null);
 	let performanceChartEl;

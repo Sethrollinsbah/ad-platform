@@ -120,3 +120,11 @@ export const nodeConfigurations = pgTable('node_configurations', {
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow()
 });
+
+export const tableNodeCustomer =pgTable('table_node_customer', {
+  id: serial('id').primaryKey(),
+})
+export const tableNodeMenuItems =pgTable('table_node_menu_item', {
+  id: serial('id').primaryKey(),
+})
+

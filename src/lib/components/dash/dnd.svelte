@@ -499,7 +499,7 @@
 	.dashboard-container {
 		position: relative;
 		width: 100%;
-		height: calc(100dvh - 4rem); /* Adjusts height by subtracting 4rem from the viewport height */
+		height: 100%; /* Adjusts height by subtracting 4rem from the viewport height */
 		overflow: hidden; /* Changed from auto to hidden for pan-zoom */
 		background-color: #f9fafb;
 		background-image:

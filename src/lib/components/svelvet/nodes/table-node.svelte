@@ -16,13 +16,13 @@
 		cellPadding = 10,
 		backgroundColor = '#FFFFFF',
 		shadowColor = '#000000',
+		schema,
 		data = {
 			schema: [] // Provide a default empty array
 		}
 	} = $props();
 
 	// Ensure data and schema exist
-	let schema = $derived(data && data.schema ? data.schema : []);
 
 	// Local state using $state
 	let isHovered = $state(false);

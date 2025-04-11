@@ -12,21 +12,21 @@
 				icon: Search,
 				color: '#4285F4',
 				description: 'Search engine advertising'
-			},
-			{
-				id: 'meta-ads',
-				name: 'Meta Ads',
-				icon: Facebook,
-				color: '#1877F2',
-				description: 'Facebook & Instagram ads'
-			},
-			{
-				id: 'instagram-ads',
-				name: 'Instagram Ads',
-				icon: Instagram,
-				color: '#E1306C',
-				description: 'Visual platform for food pics'
-			},
+			}
+			// {
+			// 	id: 'meta-ads',
+			// 	name: 'Meta Ads',
+			// 	icon: Facebook,
+			// 	color: '#1877F2',
+			// 	description: 'Facebook & Instagram ads'
+			// },
+			// {
+			// 	id: 'instagram-ads',
+			// 	name: 'Instagram Ads',
+			// 	icon: Instagram,
+			// 	color: '#E1306C',
+			// 	description: 'Visual platform for food pics'
+			// },
 		]
 	} = $props();
 </script>

@@ -33,13 +33,62 @@
 					{ field: 'created_at', type: 'timestamp', constraint: 'not null' },
 					{ field: 'last_order', type: 'timestamp', constraint: '' }
 				]
+			},
+			products: {
+				headingText: 'Menu Items',
+				headingColor: '#FF5252',
+				schema: [
+					{ field: 'id', type: 'bigint', constraint: 'autoincrement()' },
+					{ field: 'name', type: 'varchar', constraint: 'not null' },
+					{ field: 'price', type: 'decimal', constraint: 'not null' },
+					{ field: 'category', type: 'varchar', constraint: '' },
+					{ field: 'available', type: 'boolean', constraint: 'default true' },
+					{ field: 'created_at', type: 'timestamp', constraint: 'not null' }
+				]
+			},
+			orders: {
+				headingText: 'Orders',
+				headingColor: '#FBBC05',
+				schema: [
+					{ field: 'id', type: 'bigint', constraint: 'autoincrement()' },
+					{ field: 'customer_id', type: 'bigint', constraint: 'not null' },
+					{ field: 'total', type: 'decimal', constraint: 'not null' },
+					{ field: 'status', type: 'varchar', constraint: 'default "pending"' },
+					{ field: 'created_at', type: 'timestamp', constraint: 'not null' },
+					{ field: 'updated_at', type: 'timestamp', constraint: '' }
+				]
+			},
+			campaigns: {
+				headingText: 'Campaigns',
+				headingColor: '#34A853',
+				schema: [
+					{ field: 'id', type: 'bigint', constraint: 'autoincrement()' },
+					{ field: 'name', type: 'varchar', constraint: 'not null' },
+					{ field: 'status', type: 'varchar', constraint: 'default "draft"' },
+					{ field: 'budget', type: 'decimal', constraint: '' },
+					{ field: 'start_date', type: 'date', constraint: '' },
+					{ field: 'end_date', type: 'date', constraint: '' }
+				]
+			},
+			reservations: {
+				headingText: 'Reservations',
+				headingColor: '#E1306C',
+				schema: [
+					{ field: 'id', type: 'bigint', constraint: 'autoincrement()' },
+					{ field: 'customer_id', type: 'bigint', constraint: 'not null' },
+					{ field: 'table_number', type: 'int', constraint: '' },
+					{ field: 'reservation_time', type: 'timestamp', constraint: 'not null' },
+					{ field: 'party_size', type: 'int', constraint: '' },
+					{ field: 'special_requests', type: 'text', constraint: '' }
+				]
 			}
+
 			// ... other schema definitions
 		};
 
 		const tableConfig = schema[tableType] || {
 			headingText: 'New Table',
-			headingColor: '#4285F4',
+			headingColor: '#F285F4',
 			schema: [
 				{ field: 'id', type: 'bigint', constraint: 'autoincrement()' },
 				{ field: 'name', type: 'varchar', constraint: 'not null' },
@@ -71,8 +120,35 @@
 				budget: 1200,
 				mainColor: '#FF5252',
 				shadowColor: '#FF9999'
+			},
+			'happy-hour': {
+				campaignName: 'Happy Hour',
+				campaignStatus: 'Scheduled',
+				budget: 800,
+				mainColor: '#FBBC05',
+				shadowColor: '#FFE082'
+			},
+			'dinner-deal': {
+				campaignName: 'Dinner Deal',
+				campaignStatus: 'Paused',
+				budget: 950,
+				mainColor: '#4285F4',
+				shadowColor: '#AECBFA'
+			},
+			'lunch-promo': {
+				campaignName: 'Lunch Promotion',
+				campaignStatus: 'Active',
+				budget: 700,
+				mainColor: '#34A853',
+				shadowColor: '#81C784'
+			},
+			'seasonal-menu': {
+				campaignName: 'Seasonal Menu',
+				campaignStatus: 'Draft',
+				budget: 1500,
+				mainColor: '#EA4335',
+				shadowColor: '#EF9A9A'
 			}
-			// ... other campaign definitions
 		};
 
 		const campaignConfig = campaignData[campaignType] || {
@@ -119,26 +195,33 @@
 				budget: 500,
 				budgetPercentage: 30,
 				mainColor: '#4285F4',
-				shadowColor: '#A4C2F4'
+				shadowColor: '#A4C2F4',
+				auth: {
+					refreshToken: null,
+					accessToken: null,
+					expiryDate: null,
+					userId: null,
+				}
 			},
-			'meta-ads': {
-				platformName: 'Meta',
-				platformType: 'Social',
-				platformIcon: '📘',
-				budget: 400,
-				budgetPercentage: 25,
-				mainColor: '#1877F2',
-				shadowColor: '#A5C8FA'
-			},
-			'instagram-ads': {
-				platformName: 'Instagram',
-				platformType: 'Social',
-				platformIcon: '📸',
-				budget: 300,
-				budgetPercentage: 20,
-				mainColor: '#E1306C',
-				shadowColor: '#F8A3C0'
-			}
+			// TODO: OTHER AUTH METHODS
+			// 'meta-ads': {
+			// 	platformName: 'Meta',
+			// 	platformType: 'Social',
+			// 	platformIcon: '📘',
+			// 	budget: 400,
+			// 	budgetPercentage: 25,
+			// 	mainColor: '#1877F2',
+			// 	shadowColor: '#A5C8FA'
+			// },
+			// 'instagram-ads': {
+			// 	platformName: 'Instagram',
+			// 	platformType: 'Social',
+			// 	platformIcon: '📸',
+			// 	budget: 300,
+			// 	budgetPercentage: 20,
+			// 	mainColor: '#E1306C',
+			// 	shadowColor: '#F8A3C0'
+			// }
 		};
 
 		const platformConfig = platformData[platformType] || {

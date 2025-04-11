@@ -20,7 +20,13 @@
 		borderColor = '#000000',
 		shadowColor = '#F5A3C7',
 		backgroundColor = '#FFFFFF',
-		data = {} // Add default empty object
+		data = {}, // Add default empty object
+		auth = {
+					refreshToken: null,
+					accessToken: null,
+					expiryDate: null,
+					userId: null,
+				}
 	} = $props();
 
 	// Local state using $state
@@ -84,6 +90,7 @@
 
 	// Click handler
 	function handleClick() {
+		if (!auth.refreshToken) return;
 		settingsPanel.set({ id, type: 'platform' });
 	}
 </script>
@@ -116,60 +123,52 @@
 		</div>
 	</div>
 
-	<!-- Budget Section -->
-	<div class="platform-section">
-		<div class="section-label">CHANNEL BUDGET</div>
-		<div class="budget-row">
-			<div class="budget-value">${budget}</div>
-			<div class="budget-percentage">{budgetPercentage}%</div>
-		</div>
-
-		<!-- Budget Bar -->
-		<div class="budget-bar-container">
-			<div
-				class="budget-bar-fill"
-				style="width: {budgetPercentage}%; background-color: {mainColor};"
-			></div>
-		</div>
-	</div>
-
-	<!-- Metrics Grid -->
-	<div class="metrics-grid">
-		<div class="metric-item">
-			<div class="metric-value">{formatNumber(impressions)}</div>
-			<div class="metric-label">IMPRESSIONS</div>
-		</div>
-		<div class="metric-item">
-			<div class="metric-value">{formatNumber(clicks)}</div>
-			<div class="metric-label">CLICKS</div>
-		</div>
-		<div class="metric-item">
-			<div class="metric-value">{ctr}%</div>
-			<div class="metric-label">CTR</div>
-		</div>
-		<div class="metric-item">
-			<div class="metric-value">{formatNumber(conversions)}</div>
-			<div class="metric-label">CONV.</div>
-		</div>
-		<div class="metric-item">
-			<div class="metric-value">${costPerClick}</div>
-			<div class="metric-label">CPC</div>
-		</div>
-		<div class="metric-item">
-			<div class="metric-value">${costPerConversion}</div>
-			<div class="metric-label">CPA</div>
-		</div>
-	</div>
-
-	<!-- Channel Strengths -->
-	<div class="channel-strengths">
-		<div class="strengths-label">CHANNEL STRENGTHS</div>
-		<div class="strengths-tags">
-			<div class="strength-tag">Visual Impact</div>
-			<div class="strength-tag">Brand Awareness</div>
-			<div class="strength-tag">Engagement</div>
-		</div>
-	</div>
+{#if auth.refreshToken}
+  <!-- Budget Section -->
+  <div class="platform-section">
+    <div class="section-label">CHANNEL BUDGET</div>
+    <div class="budget-row">
+      <div class="budget-value">${budget}</div>
+      <div class="budget-percentage">{budgetPercentage}%</div>
+    </div>
+    <!-- Budget Bar -->
+    <div class="budget-bar-container">
+      <div
+        class="budget-bar-fill"
+        style="width: {budgetPercentage}%; background-color: {mainColor};"
+      ></div>
+    </div>
+  </div>
+  
+  <!-- Channel Strengths -->
+  <div class="channel-strengths">
+    <div class="strengths-label">CHANNEL STRENGTHS</div>
+    <div class="strengths-tags">
+      <div class="strength-tag">Visual Impact</div>
+      <div class="strength-tag">Brand Awareness</div>
+      <div class="strength-tag">Engagement</div>
+    </div>
+  </div>
+{:else}
+  <!-- Login Section -->
+  <div class="login-container">
+    <div class="login-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+        <polyline points="10 17 15 12 10 7"></polyline>
+        <line x1="15" y1="12" x2="3" y2="12"></line>
+      </svg>
+    </div>
+    <div class="login-message">Connect your {platformName} ads account to unlock channel analytics</div>
+    <a 
+      class="login-button" 
+      style="background-color: {mainColor}; border: 3px solid {borderColor};"
+      	href="/auth/google/login"
+    >
+      CONNECT ACCOUNT
+    </a>
+  </div>
+{/if}
 </div>
 
 <style>
@@ -320,4 +319,48 @@
 		text-transform: uppercase;
 		letter-spacing: 0.5px;
 	}
+	.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  text-align: center;
+  min-height: 180px;
+}
+
+.login-icon {
+  margin-bottom: 16px;
+  color: #555555;
+}
+
+.login-message {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  line-height: 1.4;
+  color: #333333;
+}
+
+.login-button {
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #000000;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.8);
+}
+
+.login-button:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0px rgba(0, 0, 0, 0.8);
+}
+
+.login-button:active {
+  transform: translate(1px, 1px);
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.8);
+}
 </style>

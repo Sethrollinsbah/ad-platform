@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { settingsPanel } from '$lib';
-	import { Node, Anchor } from 'svelvet';
 
-	// Customizable properties using Svelte 5's $props()
+	// Customizable properties using Svelte 5's $props() - removing $bindable and making explicit props
 	let {
 		id = 'campaign-1',
 		positionX = 500,
@@ -49,112 +48,114 @@
 	const getStatusColor = (status: string) => {
 		return statusColors[status] || mainColor;
 	};
+	
 	let isDragging = $state(false);
 	let dragStartX = $state(0);
 	let dragStartY = $state(0);
 	const dragThreshold = 5; // Pixels of movement needed to consider it a drag
+	
+	function handleClick() {
+		if (!isDragging) {
+			settingsPanel.set({ id, type: 'campaign' });
+		}
+	}
 </script>
 
-<Node useDefaults {id} position={{ x: positionX, y: positionY }}>
+<div
+	class="campaign-node"
+	style="
+        background-color: {backgroundColor}; 
+        border: 4px solid {borderColor};
+        box-shadow: {isHovered ? '10px 10px 0px' : '8px 8px 0px'} {shadowColor};
+    "
+	onmouseenter={() => (isHovered = true)}
+	onmouseleave={() => (isHovered = false)}
+	onclick={handleClick}
+	onmousedown={(e) => {
+		isDragging = false;
+		dragStartX = e.clientX;
+		dragStartY = e.clientY;
+	}}
+	onmousemove={(e) => {
+		// Calculate distance moved
+		const dx = Math.abs(e.clientX - dragStartX);
+		const dy = Math.abs(e.clientY - dragStartY);
+
+		// If moved more than threshold, consider it a drag
+		if (dx > dragThreshold || dy > dragThreshold) {
+			isDragging = true;
+		}
+	}}
+	onmouseup={(e) => {
+		// We'll handle click in the handleClick function
+	}}
+	ontouchstart={(e) => {
+		isDragging = false;
+		dragStartX = e.touches[0].clientX;
+		dragStartY = e.touches[0].clientY;
+	}}
+	ontouchmove={(e) => {
+		const dx = Math.abs(e.touches[0].clientX - dragStartX);
+		const dy = Math.abs(e.touches[0].clientY - dragStartY);
+		if (dx > dragThreshold || dy > dragThreshold) {
+			isDragging = true;
+		}
+	}}
+	ontouchend={(e) => {
+		if (!isDragging) {
+			handleClick();
+		}
+	}}
+>
+	<!-- Header -->
 	<div
-		role="button"
-		class="campaign-node"
-		style="
-            background-color: {backgroundColor}; 
-            border: 4px solid {borderColor};
-            box-shadow: {isHovered ? '10px 10px 0px' : '8px 8px 0px'} {shadowColor};
-        "
-		onmouseenter={() => (isHovered = true)}
-		onmouseleave={() => (isHovered = false)}
-		onmousedown={(e) => {
-			isDragging = false;
-			dragStartX = e.clientX;
-			dragStartY = e.clientY;
-		}}
-		onmousemove={(e) => {
-			// Calculate distance moved
-			const dx = Math.abs(e.clientX - dragStartX);
-			const dy = Math.abs(e.clientY - dragStartY);
-
-			// If moved more than threshold, consider it a drag
-			if (dx > dragThreshold || dy > dragThreshold) {
-				isDragging = true;
-			}
-		}}
-		onmouseup={(e) => {
-			// Only open settings panel if not dragging
-			if (!isDragging) {
-				settingsPanel.set({ id, type: 'campaign' });
-			}
-		}}
-		ontouchstart={(e) => {
-			isDragging = false;
-			dragStartX = e.touches[0].clientX;
-			dragStartY = e.touches[0].clientY;
-		}}
-		ontouchmove={(e) => {
-			const dx = Math.abs(e.touches[0].clientX - dragStartX);
-			const dy = Math.abs(e.touches[0].clientY - dragStartY);
-			if (dx > dragThreshold || dy > dragThreshold) {
-				isDragging = true;
-			}
-		}}
-		ontouchend={(e) => {
-			if (!isDragging) {
-				settingsPanel.set({ id, type: 'campaign' });
-			}
-		}}
+		class="campaign-header"
+		style="background-color: {mainColor}; border-bottom: 4px solid {borderColor};"
 	>
-		<!-- Header -->
+		<div class="campaign-title">{campaignName}</div>
 		<div
-			class="campaign-header"
-			style="background-color: {mainColor}; border-bottom: 4px solid {borderColor};"
+			class="campaign-status"
+			style="background-color: {getStatusColor(campaignStatus)}; border: 3px solid {borderColor};"
 		>
-			<div class="campaign-title">{campaignName}</div>
-			<div
-				class="campaign-status"
-				style="background-color: {getStatusColor(campaignStatus)}; border: 3px solid {borderColor};"
-			>
-				{campaignStatus}
-			</div>
-		</div>
-
-		<!-- Budget Section -->
-		<div class="campaign-section">
-			<div class="section-label">BUDGET</div>
-			<div class="budget-value">${budget}</div>
-			<div class="date-range">{startDate} to {endDate}</div>
-		</div>
-
-		<!-- Metrics Grid -->
-		<div class="metrics-grid">
-			<div class="metric-item">
-				<div class="metric-value">{formatNumber(impressions)}</div>
-				<div class="metric-label">IMPRESSIONS</div>
-			</div>
-			<div class="metric-item">
-				<div class="metric-value">{formatNumber(clicks)}</div>
-				<div class="metric-label">CLICKS</div>
-			</div>
-			<div class="metric-item">
-				<div class="metric-value">{ctr}%</div>
-				<div class="metric-label">CTR</div>
-			</div>
-			<div class="metric-item">
-				<div class="metric-value">{formatNumber(conversions)}</div>
-				<div class="metric-label">CONVERSIONS</div>
-			</div>
-			<div class="metric-item">
-				<div class="metric-value">{convRate}%</div>
-				<div class="metric-label">CONV. RATE</div>
-			</div>
-			<div class="metric-item">
-				<div class="metric-value">${cpc}</div>
-				<div class="metric-label">CPC</div>
-			</div>
+			{campaignStatus}
 		</div>
 	</div>
-</Node>
+
+	<!-- Budget Section -->
+	<div class="campaign-section">
+		<div class="section-label">BUDGET</div>
+		<div class="budget-value">${budget}</div>
+		<div class="date-range">{startDate} to {endDate}</div>
+	</div>
+
+	<!-- Metrics Grid -->
+	<div class="metrics-grid">
+		<div class="metric-item">
+			<div class="metric-value">{formatNumber(impressions)}</div>
+			<div class="metric-label">IMPRESSIONS</div>
+		</div>
+		<div class="metric-item">
+			<div class="metric-value">{formatNumber(clicks)}</div>
+			<div class="metric-label">CLICKS</div>
+		</div>
+		<div class="metric-item">
+			<div class="metric-value">{ctr}%</div>
+			<div class="metric-label">CTR</div>
+		</div>
+		<div class="metric-item">
+			<div class="metric-value">{formatNumber(conversions)}</div>
+			<div class="metric-label">CONVERSIONS</div>
+		</div>
+		<div class="metric-item">
+			<div class="metric-value">{convRate}%</div>
+			<div class="metric-label">CONV. RATE</div>
+		</div>
+		<div class="metric-item">
+			<div class="metric-value">${cpc}</div>
+			<div class="metric-label">CPC</div>
+		</div>
+	</div>
+</div>
 
 <style>
 	.campaign-node {

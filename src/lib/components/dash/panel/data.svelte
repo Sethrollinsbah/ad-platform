@@ -38,9 +38,9 @@
 	let chartInitialized = $state(false);
 
 	// Date range state
-	let dateRange = 'Last 30 Days';
-	let searchQuery = '';
-	let selectedView = 'all';
+	let dateRange = $state('Last 30 Days');
+	let searchQuery = $state('');
+	let selectedView = $state('all');
 
 	// Sample table data
 	const tableData = {
@@ -49,57 +49,75 @@
 		recentRecords: 112,
 		schema: [
 			{ name: 'id', type: 'bigint', nonNull: true, count: 2458, description: 'Primary key' },
-			{ name: 'name', type: 'varchar(255)', nonNull: true, count: 2458, description: 'Customer name' },
-			{ name: 'email', type: 'varchar(255)', nonNull: true, count: 2431, description: 'Email address' },
-			{ name: 'phone', type: 'varchar(20)', nonNull: false, count: 1897, description: 'Phone number' },
-			{ 
-				name: 'address', 
-				type: 'varchar(255)', 
-				nonNull: false, 
-				count: 1745, 
-				description: 'Street address' 
+			{
+				name: 'name',
+				type: 'varchar(255)',
+				nonNull: true,
+				count: 2458,
+				description: 'Customer name'
 			},
-			{ 
-				name: 'city', 
-				type: 'varchar(100)', 
-				nonNull: false, 
-				count: 1842, 
-				description: 'City name' 
+			{
+				name: 'email',
+				type: 'varchar(255)',
+				nonNull: true,
+				count: 2431,
+				description: 'Email address'
 			},
-			{ 
-				name: 'zip', 
-				type: 'varchar(20)', 
-				nonNull: false, 
-				count: 1824, 
-				description: 'ZIP/Postal code' 
+			{
+				name: 'phone',
+				type: 'varchar(20)',
+				nonNull: false,
+				count: 1897,
+				description: 'Phone number'
 			},
-			{ 
-				name: 'created_at', 
-				type: 'timestamp', 
-				nonNull: true, 
-				count: 2458, 
-				description: 'Account creation date' 
+			{
+				name: 'address',
+				type: 'varchar(255)',
+				nonNull: false,
+				count: 1745,
+				description: 'Street address'
 			},
-			{ 
-				name: 'last_order_date', 
-				type: 'timestamp', 
-				nonNull: false, 
-				count: 1975, 
-				description: 'Most recent order date' 
+			{
+				name: 'city',
+				type: 'varchar(100)',
+				nonNull: false,
+				count: 1842,
+				description: 'City name'
 			},
-			{ 
-				name: 'order_count', 
-				type: 'integer', 
-				nonNull: true, 
-				count: 2458, 
-				description: 'Total number of orders' 
+			{
+				name: 'zip',
+				type: 'varchar(20)',
+				nonNull: false,
+				count: 1824,
+				description: 'ZIP/Postal code'
 			},
-			{ 
-				name: 'total_spent', 
-				type: 'decimal(10,2)', 
-				nonNull: true, 
-				count: 2458, 
-				description: 'Total amount spent' 
+			{
+				name: 'created_at',
+				type: 'timestamp',
+				nonNull: true,
+				count: 2458,
+				description: 'Account creation date'
+			},
+			{
+				name: 'last_order_date',
+				type: 'timestamp',
+				nonNull: false,
+				count: 1975,
+				description: 'Most recent order date'
+			},
+			{
+				name: 'order_count',
+				type: 'integer',
+				nonNull: true,
+				count: 2458,
+				description: 'Total number of orders'
+			},
+			{
+				name: 'total_spent',
+				type: 'decimal(10,2)',
+				nonNull: true,
+				count: 2458,
+				description: 'Total amount spent'
 			}
 		],
 		growthData: [
@@ -136,7 +154,7 @@
 				created_at: '2025-01-22',
 				last_order_date: '2025-03-20',
 				order_count: 3,
-				total_spent: 124.30
+				total_spent: 124.3
 			},
 			{
 				id: 3,
@@ -162,7 +180,7 @@
 				created_at: '2025-02-18',
 				last_order_date: '2025-03-15',
 				order_count: 2,
-				total_spent: 83.60
+				total_spent: 83.6
 			},
 			{
 				id: 5,
@@ -175,7 +193,7 @@
 				created_at: '2025-03-12',
 				last_order_date: null,
 				order_count: 0,
-				total_spent: 0.00
+				total_spent: 0.0
 			}
 		],
 		topQueries: [
@@ -187,7 +205,7 @@
 			},
 			{
 				name: 'New Customers This Month',
-				query: 'SELECT * FROM customers WHERE created_at >= DATE_TRUNC(\'month\', CURRENT_DATE)',
+				query: "SELECT * FROM customers WHERE created_at >= DATE_TRUNC('month', CURRENT_DATE)",
 				lastRun: '2025-03-30',
 				runtime: '0.09s'
 			},
@@ -243,12 +261,13 @@
 
 	// Filter schema fields based on search query
 	let filteredSchema = $derived(
-		searchQuery 
-			? tableData.schema.filter(field => 
-				field.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				field.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-				field.description.toLowerCase().includes(searchQuery.toLowerCase())
-			)
+		searchQuery
+			? tableData.schema.filter(
+					(field) =>
+						field.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+						field.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
+						field.description.toLowerCase().includes(searchQuery.toLowerCase())
+				)
 			: tableData.schema
 	);
 
@@ -273,19 +292,21 @@
 		growthChart = new Chart(growthChartEl, {
 			type: 'line',
 			data: {
-				labels: tableData.growthData.map(d => {
+				labels: tableData.growthData.map((d) => {
 					const date = new Date(d.date);
 					return `${date.getMonth() + 1}/${date.getDate()}`;
 				}),
-				datasets: [{
-					label: 'Records',
-					data: tableData.growthData.map(d => d.count),
-					borderColor: '#3b82f6',
-					backgroundColor: 'rgba(59, 130, 246, 0.1)',
-					borderWidth: 2,
-					tension: 0.3,
-					fill: true
-				}]
+				datasets: [
+					{
+						label: 'Records',
+						data: tableData.growthData.map((d) => d.count),
+						borderColor: '#3b82f6',
+						backgroundColor: 'rgba(59, 130, 246, 0.1)',
+						borderWidth: 2,
+						tension: 0.3,
+						fill: true
+					}
+				]
 			},
 			options: {
 				responsive: true,
@@ -322,19 +343,21 @@
 		distributionChart = new Chart(distributionChartEl, {
 			type: 'pie',
 			data: {
-				labels: tableData.valueDistribution.map(d => d.city),
-				datasets: [{
-					data: tableData.valueDistribution.map(d => d.count),
-					backgroundColor: [
-						'#3b82f6', // blue
-						'#10b981', // green
-						'#f59e0b', // amber
-						'#ef4444', // red
-						'#8b5cf6'  // purple
-					],
-					borderWidth: 1,
-					borderColor: '#fff'
-				}]
+				labels: tableData.valueDistribution.map((d) => d.city),
+				datasets: [
+					{
+						data: tableData.valueDistribution.map((d) => d.count),
+						backgroundColor: [
+							'#3b82f6', // blue
+							'#10b981', // green
+							'#f59e0b', // amber
+							'#ef4444', // red
+							'#8b5cf6' // purple
+						],
+						borderWidth: 1,
+						borderColor: '#fff'
+					}
+				]
 			},
 			options: {
 				responsive: true,
@@ -348,9 +371,12 @@
 					},
 					tooltip: {
 						callbacks: {
-							label: function(context) {
+							label: function (context) {
 								const value = context.raw as number;
-								const total = tableData.valueDistribution.reduce((sum, item) => sum + item.count, 0);
+								const total = tableData.valueDistribution.reduce(
+									(sum, item) => sum + item.count,
+									0
+								);
 								const percentage = ((value / total) * 100).toFixed(1);
 								return `${context.label}: ${value} (${percentage}%)`;
 							}
@@ -363,11 +389,14 @@
 
 	function initTypeChart() {
 		// Count fields by data type
-		const typeGroups = tableData.schema.reduce((acc, field) => {
-			const baseType = field.type.split('(')[0];
-			acc[baseType] = (acc[baseType] || 0) + 1;
-			return acc;
-		}, {} as Record<string, number>);
+		const typeGroups = tableData.schema.reduce(
+			(acc, field) => {
+				const baseType = field.type.split('(')[0];
+				acc[baseType] = (acc[baseType] || 0) + 1;
+				return acc;
+			},
+			{} as Record<string, number>
+		);
 
 		const types = Object.keys(typeGroups);
 		const counts = Object.values(typeGroups);
@@ -376,19 +405,21 @@
 			type: 'bar',
 			data: {
 				labels: types,
-				datasets: [{
-					label: 'Fields',
-					data: counts,
-					backgroundColor: [
-						'#3b82f6', // blue
-						'#10b981', // green
-						'#f59e0b', // amber
-						'#ef4444', // red
-						'#8b5cf6', // purple
-						'#ec4899'  // pink
-					],
-					borderWidth: 0
-				}]
+				datasets: [
+					{
+						label: 'Fields',
+						data: counts,
+						backgroundColor: [
+							'#3b82f6', // blue
+							'#10b981', // green
+							'#f59e0b', // amber
+							'#ef4444', // red
+							'#8b5cf6', // purple
+							'#ec4899' // pink
+						],
+						borderWidth: 0
+					}
+				]
 			},
 			options: {
 				responsive: true,
@@ -465,15 +496,18 @@
 							{tableData.schema.length}
 						</div>
 						<div class="mt-1 flex items-center justify-center text-xs text-emerald-500">
-							{tableData.schema.filter(f => f.nonNull).length} required fields
+							{tableData.schema.filter((f) => f.nonNull).length} required fields
 						</div>
 					</div>
 
 					<div class="rounded-lg bg-purple-50 p-3 text-center">
 						<div class="text-sm font-medium text-gray-500">Data Completeness</div>
 						<div class="text-xl font-bold text-purple-700">
-							{((tableData.schema.reduce((sum, field) => sum + field.count, 0) / 
-                            (tableData.totalRecords * tableData.schema.length)) * 100).toFixed(1)}%
+							{(
+								(tableData.schema.reduce((sum, field) => sum + field.count, 0) /
+									(tableData.totalRecords * tableData.schema.length)) *
+								100
+							).toFixed(1)}%
 						</div>
 						<div class="mt-1 flex items-center justify-center text-xs">
 							<span class="text-purple-500">Overall data quality</span>
@@ -483,8 +517,11 @@
 					<div class="rounded-lg bg-amber-50 p-3 text-center">
 						<div class="text-sm font-medium text-gray-500">Growth Rate</div>
 						<div class="text-xl font-bold text-amber-700">
-							+{(((tableData.totalRecords - tableData.growthData[0].count) / 
-                            tableData.growthData[0].count) * 100).toFixed(1)}%
+							+{(
+								((tableData.totalRecords - tableData.growthData[0].count) /
+									tableData.growthData[0].count) *
+								100
+							).toFixed(1)}%
 						</div>
 						<div class="mt-1 flex items-center justify-center text-xs text-amber-500">
 							Past 90 days
@@ -514,29 +551,25 @@
 					<div class="flex items-center gap-2">
 						<div class="relative">
 							<Search class="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
-							<Input
-								placeholder="Search fields..."
-								class="pl-8"
-								bind:value={searchQuery}
-							/>
+							<Input placeholder="Search fields..." class="pl-8" bind:value={searchQuery} />
 						</div>
-						
+
 						<div class="flex rounded-md border border-gray-200 text-sm">
-							<button 
+							<button
 								class={`px-3 py-1 ${selectedView === 'all' ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-600'}`}
-								on:click={() => selectedView = 'all'}
+								on:click={() => (selectedView = 'all')}
 							>
 								All
 							</button>
-							<button 
+							<button
 								class={`px-3 py-1 ${selectedView === 'required' ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-600'}`}
-								on:click={() => selectedView = 'required'}
+								on:click={() => (selectedView = 'required')}
 							>
 								Required
 							</button>
-							<button 
+							<button
 								class={`px-3 py-1 ${selectedView === 'issues' ? 'bg-blue-100 text-blue-700' : 'bg-white text-gray-600'}`}
-								on:click={() => selectedView = 'issues'}
+								on:click={() => (selectedView = 'issues')}
 							>
 								Issues
 							</button>
@@ -557,7 +590,7 @@
 							</Table.Row>
 						</Table.Header>
 						<Table.Body>
-							{#each filteredSchema.filter(field => {
+							{#each filteredSchema.filter((field) => {
 								if (selectedView === 'all') return true;
 								if (selectedView === 'required') return field.nonNull;
 								if (selectedView === 'issues') return field.count < tableData.totalRecords;
@@ -570,7 +603,10 @@
 									</Table.Cell>
 									<Table.Cell class="text-center">
 										{#if field.nonNull}
-											<Badge variant="default" class="bg-green-100 text-green-800 hover:bg-green-100">Yes</Badge>
+											<Badge
+												variant="default"
+												class="bg-green-100 text-green-800 hover:bg-green-100">Yes</Badge
+											>
 										{:else}
 											<Badge variant="outline" class="border-gray-200 text-gray-500">No</Badge>
 										{/if}
@@ -582,7 +618,9 @@
 												class="mr-2 h-2 w-24"
 												style="background-color: #e5e7eb;"
 											/>
-											<span class="text-xs">{((field.count / tableData.totalRecords) * 100).toFixed(1)}%</span>
+											<span class="text-xs"
+												>{((field.count / tableData.totalRecords) * 100).toFixed(1)}%</span
+											>
 										</div>
 									</Table.Cell>
 									<Table.Cell class="text-sm text-gray-500">{field.description}</Table.Cell>
@@ -643,7 +681,8 @@
 							<span class="text-sm font-medium">Schema Analysis</span>
 						</div>
 						<p class="mt-1 text-sm text-gray-600">
-							This table primarily contains string and numeric data. The timestamp fields allow for time-based analysis of customer activity and ordering patterns.
+							This table primarily contains string and numeric data. The timestamp fields allow for
+							time-based analysis of customer activity and ordering patterns.
 						</p>
 					</div>
 				</Card.Content>
@@ -703,7 +742,9 @@
 								<h4 class="font-medium">{query.name}</h4>
 								<Badge variant="outline" class="text-xs">Last run: {query.lastRun}</Badge>
 							</div>
-							<pre class="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-xs"><code>{query.query}</code></pre>
+							<pre class="mt-2 overflow-x-auto rounded-md bg-gray-50 p-3 text-xs"><code
+									>{query.query}</code
+								></pre>
 							<div class="mt-2 flex items-center justify-between">
 								<span class="text-xs text-gray-500">Runtime: {query.runtime}</span>
 								<Button variant="outline" size="sm" class="text-xs">Run Query</Button>
@@ -735,8 +776,8 @@
 								</Badge>
 							</div>
 							<p class="mt-2 text-sm text-amber-700">
-								{issue.count} records are missing values in the {issue.field} field.
-								This may impact analysis and customer communication.
+								{issue.count} records are missing values in the {issue.field} field. This may impact
+								analysis and customer communication.
 							</p>
 						</div>
 					{/each}

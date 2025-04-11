@@ -1,4 +1,3 @@
-// src/lib/components/dash/campaign-panel/overview.svelte
 <script lang="ts">
 	import { settingsPanel } from '$lib';
 	import { Chart, registerables } from 'chart.js';
@@ -9,6 +8,7 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import OverviewTable from './overview-table.svelte';
 	import OverviewCampaign from './overview-campaign.svelte';
+	import OverviewPlatform from './overview-platform.svelte';
 
 	let campaignData = $state(null);
 	let performanceChartEl;
@@ -31,45 +31,45 @@
 	async function fetchCampaignData() {
 		try {
 			isLoading = true;
-			
+
 			// Get node ID from settings panel
 			const nodeId = $settingsPanel.id;
-			
+
 			if (!nodeId) {
 				isLoading = false;
 				return;
 			}
-			
+
 			// Extract campaign ID from node ID
 			// Assuming format like "campaign-weekend-special" -> "weekend-special"
 			const campaignId = nodeId.split('-').slice(1).join('-');
-			
+
 			// Fetch campaign data from API
 			const response = await fetch(`/api/campaign/${campaignId}`);
-			
+
 			if (!response.ok) {
 				throw new Error(`Failed to fetch campaign data: ${response.status} ${response.statusText}`);
 			}
-			
+
 			const data = await response.json();
-			
+
 			// Update campaign data
 			campaignData = data.campaign;
 			dailyMetrics = data.dailyMetrics || [];
 			conversionBreakdown = data.conversionBreakdown || [];
-			
+
 			isLoading = false;
-			
+
 			// Initialize charts after data is loaded
 			setTimeout(() => {
 				if (!chartInitialized && window) {
 					chartInitialized = true;
 					Chart.register(...registerables);
-				
+
 					if ($settingsPanel.type === 'campaign' && performanceChartEl) {
 						initPerformanceChart(dailyMetrics);
 					}
-				
+
 					if ($settingsPanel.type === 'platform' && conversionChartEl) {
 						initConversionChart(conversionBreakdown);
 					}
@@ -201,10 +201,9 @@
 
 <!-- Campaign Overview -->
 {#if $settingsPanel.type === 'campaign'}
-
 	<OverviewCampaign></OverviewCampaign>
+{:else if $settingsPanel.type === 'platform'}
+	<OverviewPlatform></OverviewPlatform>
 {:else if $settingsPanel.type === 'table'}
-	<!-- Similar structure for Table Overview -->
-
 	<OverviewTable></OverviewTable>
 {/if}

@@ -1,22 +1,18 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { nodeDefinitions, updateNodePosition } from '$lib/stores/node-store';
+	import { nodeDefinitions } from '$lib/stores/node-store';
 	import { page } from '$app/stores';
-	import { projectId } from '$lib';
-
-	// Import your node components here
-	import CampaignNode from '@/lib/components/svelvet/nodes/campaign-node.svelte';
-	import PlatformNode from '@/lib/components/svelvet/nodes/platform-node.svelte';
-	import TableNode from '@/lib/components/svelvet/nodes/table-node.svelte';
-	import Draggable from '@/lib/components/draggable.svelte';
 	import { browser } from '$app/environment';
-	import DndComponents from './dnd-components.svelte';
+	import ActivityPanel from './activity-panel.svelte';
+	import Panel from './panel.svelte';
+	import CreateButton from './create-button.svelte';
 
 	// Get project ID from the URL
+	let currentProjectId = $derived($page.params.projectId || '');
 
 	// Set up a container ref
-	let container = $state();
-	let canvas = $state();
+	let container;
+	let canvas;
 
 	// Manual pan-zoom state
 	let scale = $state(1);
@@ -42,7 +38,7 @@
 	async function loadNodesFromDB() {
 		try {
 			const response = await fetch(
-				`/api/nodes/position?projectId=${encodeURIComponent($page.params.projectId)}`
+				`/api/nodes/position?projectId=${encodeURIComponent(currentProjectId)}`
 			);
 			const data = await response.json();
 
@@ -121,7 +117,6 @@
 	}
 
 	// Handle position updates for nodes
-
 	// Function to check if an element is a node or child of a node
 	function isNodeElement(element) {
 		if (!element) return false;
@@ -405,17 +400,10 @@
 	});
 
 	// Get component based on node type
-	function getComponentForType(type) {
-		switch (type) {
-			case 'campaign':
-				return CampaignNode;
-			case 'platform':
-				return PlatformNode;
-			case 'table':
-				return TableNode;
-			default:
-				return null;
-		}
+
+	// Function to test navigation to a far-off position
+	function gotoFarPosition() {
+		navigateTo(11000, 800);
 	}
 
 	let socket: WebSocket | null = $state(null);
@@ -487,59 +475,40 @@
 	});
 </script>
 
-<div class="dashboard-container h-full w-full" bind:this={container}>
-	<div
-		class="canvas"
-		bind:this={canvas}
-		style="transform: translate({panX}px, {panY}px) scale({scale})"
-	>
-		{#each $nodeDefinitions as node (node.id)}
-			{#if getComponentForType(node.type)}
-				<Draggable
-					id={node.id}
-					scale
-					panX
-					panY
-					calculateBoundaries
-					position={node.position}
-					bounds=".dashboard-container"
-				>
-					<svelte:component this={getComponentForType(node.type)} id={node.id} {...node.data} />
-				</Draggable>
-			{/if}
-		{/each}
-	</div>
+<!-- Project indicator -->
+<div
+	class="absolute bottom-4 left-4 z-10 rounded-md bg-white bg-opacity-80 px-3 py-1 text-sm shadow-sm"
+>
+	Project: {$page.params.projectId}
 </div>
-<DndComponents></DndComponents>
+
+<!-- Zoom controls -->
+<div
+	class="zoom-controls absolute bottom-20 right-4 flex flex-col gap-2 rounded-md bg-white bg-opacity-80 p-2 shadow-sm"
+>
+	<button class="zoom-button" onclick={zoomIn} title="Zoom In (Ctrl +)"> + </button>
+	<button class="zoom-button" onclick={autoFit} title="Fit All Nodes"> ⊡ </button>
+	<button class="zoom-button" onclick={resetZoom} title="Reset View (Ctrl 0)"> ↻ </button>
+	<button class="zoom-button" onclick={zoomOut} title="Zoom Out (Ctrl -)"> - </button>
+	<!-- Test button for far position navigation -->
+	<button class="zoom-button" onclick={gotoFarPosition} title="Go to (11000, 800)"> ⟿ </button>
+</div>
+
+<div class="absolute left-4 top-16 z-10 rounded-md bg-white bg-opacity-80 p-2 text-sm shadow-sm">
+	<p>📋 <strong>Navigation Tips:</strong></p>
+	<ul class="mt-1 list-disc pl-5">
+		<li>Drag empty space to pan the canvas</li>
+		<li>Drag any node to move it</li>
+		<li>Scroll wheel to zoom in/out</li>
+		<li>Touch users: Drag with one finger</li>
+	</ul>
+</div>
+
+<ActivityPanel></ActivityPanel>
+<Panel></Panel>
+<CreateButton></CreateButton>
 
 <style>
-	.dashboard-container {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		overflow: hidden;
-		background-color: #f9fafb;
-		background-image:
-			linear-gradient(to right, #e5e7eb 1px, transparent 1px),
-			linear-gradient(to bottom, #e5e7eb 1px, transparent 1px);
-		background-size: 20px 20px;
-		cursor: grab; /* Add grab cursor to indicate pannable area */
-	}
-
-	.dashboard-container:active {
-		cursor: grabbing; /* Change cursor when actively panning */
-	}
-
-	.canvas {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		transform-origin: 0 0;
-		will-change: transform; /* Optimize for animations */
-	}
-
 	.zoom-controls {
 		z-index: 10;
 	}

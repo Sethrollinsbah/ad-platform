@@ -54,6 +54,7 @@
 		"chart.js": "^4.4.8",
 		"date-fns": "^4.1.0",
 		"drizzle-orm": "^0.40.0",
+		"google-ads-api": "^19.0.2-rest-beta",
 		"lucide": "^0.484.0",
 		"pg": "^8.14.1",
 		"postgres": "^3.4.5",

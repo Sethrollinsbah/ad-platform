@@ -3,11 +3,16 @@
 	import { quintOut } from 'svelte/easing';
 	import { settingsPanel } from '@/lib';
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import Overview from './campaign-panel/overview.svelte';
-	import Settings from './campaign-panel/settings.svelte';
-	import Data from './campaign-panel/data.svelte';
+	import Overview from './panel/overview.svelte';
+	import Settings from './panel/settings.svelte';
+	import Data from './panel/data.svelte';
 	import Badge from '../ui/badge/badge.svelte';
 	import ApprovedLogos from './approved-logos.svelte';
+	import Target from './panel/target.svelte';
+	import Budget from './panel/budget.svelte';
+	import Schedule from './panel/schedule.svelte';
+	import Assets from './panel/assets.svelte';
+
 	let campPanel = $state([
 		{
 			name: 'Overview',
@@ -25,6 +30,18 @@
 				{
 					name: 'Overview',
 					code: Overview
+				},
+				{
+					name: 'Targeting',
+					code: Target
+				},
+				{
+					name: 'Budget',
+					code: Budget
+				},
+				{
+					name: 'Schedule',
+					code: Schedule
 				},
 				{
 					name: 'Settings',
@@ -51,6 +68,14 @@
 				{
 					name: 'Overview',
 					code: Overview
+				},
+				{
+					name: 'Assets',
+					code: Assets
+				},
+				{
+					name: 'Targeting',
+					code: Target
 				},
 				{
 					name: 'Settings',

@@ -2,6 +2,8 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Search, Facebook, Instagram, Send, Store } from 'lucide-svelte';
 
+	import Google from '@/lib/components/dash/logos/google.svelte'
+
 	let {
 		onBack = () => {},
 		onSelect = (id: string) => {},
@@ -9,7 +11,7 @@
 			{
 				id: 'google-ads',
 				name: 'Google Ads',
-				icon: Search,
+				icon: Google,
 				color: '#4285F4',
 				description: 'Search engine advertising'
 			}

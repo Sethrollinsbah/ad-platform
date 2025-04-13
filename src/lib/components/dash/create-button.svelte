@@ -191,7 +191,7 @@
 			'google-ads': {
 				platformName: 'Google',
 				platformType: 'Search',
-				platformIcon: '🔍',
+				platformIcon: 'google-1',
 				budget: 500,
 				budgetPercentage: 30,
 				mainColor: '#4285F4',

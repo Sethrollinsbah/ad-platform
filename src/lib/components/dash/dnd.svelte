@@ -37,7 +37,7 @@
 	let maxX = $state(0);
 	let maxY = $state(0);
 	let nodeSize = { width: 350, height: 300 }; // Approximate size of nodes
-
+let loading = $state(true)
 	// Load nodes from the database
 	async function loadNodesFromDB() {
 		try {
@@ -48,6 +48,7 @@
 
 			if (data.success && data.nodes) {
 				// Clear existing nodes
+
 				nodeDefinitions.set([]);
 
 				// Add nodes from the database
@@ -65,6 +66,7 @@
 
 				// After loading nodes, calculate boundaries and auto-fit
 				setTimeout(calculateBoundaries, 100);
+				loading = false
 			}
 		} catch (error) {
 			console.error('Error loading nodes:', error);
@@ -487,6 +489,7 @@
 	});
 </script>
 
+{#if !loading}
 <div class="dashboard-container h-full w-full" bind:this={container}>
 	<div
 		class="canvas"
@@ -511,6 +514,11 @@
 	</div>
 </div>
 <DndComponents></DndComponents>
+{:else}
+	<div class="dashboard-container">
+		<div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">Loading</div>
+	</div>
+{/if}
 
 <style>
 	.dashboard-container {

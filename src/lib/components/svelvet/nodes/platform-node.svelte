@@ -1,4 +1,6 @@
 <script lang="ts">
+
+import ApprovedLogos from '@/lib/components/dash/approved-logos.svelte'
 	import { settingsPanel } from '@/lib';
 
 	// Customizable properties using Svelte 5's $props()
@@ -53,7 +55,7 @@
 	const platformIcons = {
 		Instagram: '📸',
 		Facebook: '👥',
-		Google: '🔍',
+		Google: 'google-1',
 		TikTok: '🎵',
 		Twitter: '🐦',
 		LinkedIn: '💼',
@@ -112,7 +114,9 @@
 		class="platform-header"
 		style="background-color: {mainColor}; border-bottom: 4px solid {borderColor};"
 	>
-		<div class="platform-icon">{platformIcon}</div>
+		<div class="platform-icon">
+						<ApprovedLogos int={platformIcon}></ApprovedLogos>
+</div>
 		<div class="platform-title">{platformName}</div>
 		<div
 			class="platform-type"

@@ -49,7 +49,7 @@
 	};
 </script>
 
-<div use:draggable={options} class="draggable-item" data-node-id={id}>
+<div use:draggable={options} class="draggable-item z-0 hover:z-50 focus:z-50" data-node-id={id}>
 	<!-- <slot></slot> -->
 	{@render children()}
 </div>
